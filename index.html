@@ -70,6 +70,7 @@ body{
   animation:pulse 1.8s ease-out infinite;
 }
 .dot.off{background:#f59e0b}
+.dot.err{background:#ef4444}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.7)}70%{box-shadow:0 0 0 11px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
 
 .main{padding:26px 32px 60px;max-width:1600px;width:100%}
@@ -120,10 +121,9 @@ body{
 
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .row-split{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
-@media(max-width:1050px){.row-split{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+@media(max-width:1050px){.row-split{grid-template-columns:1fr}}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
 
 .field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
 .field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
@@ -230,6 +230,14 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .hint.warn{background:#fffbeb;color:#b45309}
 .hint.err{background:#fef2f2;color:#b91c1c}
 
+.quick-rack{
+  background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px dashed #f59e0b;
+  border-radius:14px;padding:14px;margin-bottom:16px;
+}
+.quick-rack h4{font-size:13px;font-weight:800;color:#92400e;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.quick-rack .qr-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.quick-rack .qr-row .field{margin-bottom:0;flex:1;min-width:130px}
+
 .mini-list{display:flex;flex-direction:column;gap:9px;max-height:520px;overflow-y:auto;padding-right:4px}
 .mini{
   display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;
@@ -268,6 +276,7 @@ tbody tr:last-child td{border-bottom:0}
 .pill-green{background:var(--green-soft);color:#047857}
 .pill-amber{background:#fffbeb;color:#b45309}
 .pill-purple{background:#f5f3ff;color:#7c3aed}
+.pill-red{background:#fef2f2;color:#b91c1c}
 
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);z-index:1}
 .leaflet-container{font-family:inherit}
@@ -284,13 +293,14 @@ tbody tr:last-child td{border-bottom:0}
 
 #toasts{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:11px;pointer-events:none}
 .toast{
-  min-width:280px;max-width:400px;padding:14px 18px;border-radius:14px;background:#fff;
+  min-width:280px;max-width:420px;padding:14px 18px;border-radius:14px;background:#fff;
   box-shadow:0 18px 44px rgba(15,23,42,.18);border-left:4px solid var(--green);
   display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:700;
   animation:slideIn .35s cubic-bezier(.4,0,.2,1);pointer-events:auto;
 }
 .toast.err{border-left-color:#ef4444}
 .toast.info{border-left-color:var(--blue)}
+.toast.warn{border-left-color:#f59e0b}
 .toast.out{animation:slideOut .3s forwards}
 @keyframes slideIn{from{opacity:0;transform:translateX(80px) scale(.95)}to{opacity:1;transform:none}}
 @keyframes slideOut{to{opacity:0;transform:translateX(80px) scale(.95)}}
@@ -298,6 +308,7 @@ tbody tr:last-child td{border-bottom:0}
 .toast.ok .toast-ico{background:var(--green-soft)}
 .toast.err .toast-ico{background:#fef2f2}
 .toast.info .toast-ico{background:var(--blue-soft)}
+.toast.warn .toast-ico{background:#fffbeb}
 
 #flash{
   position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0;
@@ -364,9 +375,14 @@ tbody tr:last-child td{border-bottom:0}
       </button>
     </nav>
 
-    <div class="conn">
-      <span class="dot live" id="connDot"></span>
-      <span id="connTxt">Connecting...</span>
+    <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+      <div class="conn" style="border:0;padding:0">
+        <span class="dot live" id="connDot"></span>
+        <span id="connTxt">Checking storage…</span>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="resetBtn" title="Clears all racks and bags">
+        ♻ Reset all data
+      </button>
     </div>
   </aside>
 
@@ -467,6 +483,18 @@ tbody tr:last-child td{border-bottom:0}
     <section class="view" id="view-scan">
       <div class="row-split">
         <div class="card scan-card">
+
+          <div class="quick-rack" id="quickRackBox" style="display:none">
+            <h4>⚠️ No racks exist yet — create one to enable saving</h4>
+            <div class="qr-row">
+              <div class="field">
+                <label>New Rack ID</label>
+                <input id="qrRackId" placeholder="A-L-1" value="A-L-1" />
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" id="qrAddBtn">Create Rack</button>
+            </div>
+          </div>
+
           <div class="scan-head">
             <div class="scan-badge">UFID 6M SCANNER</div>
             <div class="scan-status" id="scanStatus">
@@ -626,22 +654,27 @@ tbody tr:last-child td{border-bottom:0}
 <div id="toasts"></div>
 <div id="flash"></div>
 
+<!-- Firebase Realtime Database SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* =====================================================================
-   FIREBASE CONFIG
+   FIREBASE CONFIGURATION — Realtime Database
    ===================================================================== */
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyABuZWbNXGJ359mbctDsX-SSxwkUd3v1KY",
-  authDomain: "student-management-syste-d39a3.firebaseapp.com",
-  databaseURL: "https://student-management-syste-d39a3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "student-management-syste-d39a3",
-  storageBucket: "student-management-syste-d39a3.firebasestorage.app",
+  apiKey:            "AIzaSyABuZWbNXGJ359mbctDsX-SSxwkUd3v1KY",
+  authDomain:        "student-management-syste-d39a3.firebaseapp.com",
+  databaseURL:       "https://student-management-syste-d39a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "student-management-syste-d39a3",
+  storageBucket:     "student-management-syste-d39a3.firebasestorage.app",
   messagingSenderId: "36925529487",
-  appId: "1:36925529487:web:385e1af7ba174f8440fffa"
+  appId:             "1:36925529487:web:385e1af7ba174f8440fffa"
 };
+
+/* Data is stored under this namespace so it doesn't clash with anything
+   else that might already live in your Realtime Database. */
+const DB_ROOT = 'teastore';
 
 const MIN_SIGNAL   = 98;
 const UFID_PREFIX  = "6M";
@@ -680,86 +713,148 @@ function escapeHtml(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function toast(msg, type = 'ok'){
-  const box = $('#toasts');
-  if (!box) return;
+function toast(msg, type = 'ok', ms = 3400){
+  const box = $('#toasts'); if (!box) return;
   const el  = document.createElement('div');
   el.className = `toast ${type}`;
-  const ico = type === 'ok' ? '✅' : type === 'err' ? '⚠️' : 'ℹ️';
+  const ico = type === 'ok' ? '✅' : type === 'err' ? '⚠️' : type === 'warn' ? '⚡' : 'ℹ️';
   el.innerHTML = `<div class="toast-ico">${ico}</div><div>${msg}</div>`;
   box.appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3400);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, ms);
 }
 function flash(){
-  const f = $('#flash');
-  if (!f) return;
+  const f = $('#flash'); if (!f) return;
   f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
 }
 
 /* =====================================================================
-   DATA LAYER
+   LOCAL BACKUP STORAGE (used as offline cache)
+   ===================================================================== */
+const Storage = {
+  available: false,
+  memory: { racks: [], bags: [] },
+
+  test(){
+    try {
+      const k = '__tsp_test__';
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      this.available = true;
+      return true;
+    } catch (e){
+      console.warn('[Storage] localStorage not available:', e.message);
+      this.available = false;
+      return false;
+    }
+  },
+  read(key){
+    if (this.available){
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const p = JSON.parse(raw);
+        return Array.isArray(p) ? p : null;
+      } catch (e){
+        console.warn('[Storage] read error', key, e.message);
+        return null;
+      }
+    }
+    if (key === 'teastore_racks_v2') return this.memory.racks;
+    if (key === 'teastore_bags_v2')  return this.memory.bags;
+    return null;
+  },
+  write(key, val){
+    if (this.available){
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+        return true;
+      } catch (e){
+        console.warn('[Storage] write error', key, e.message);
+        return false;
+      }
+    }
+    if (key === 'teastore_racks_v2') this.memory.racks = val;
+    if (key === 'teastore_bags_v2')  this.memory.bags  = val;
+    return true;
+  }
+};
+
+/* =====================================================================
+   DATA LAYER — Firebase Realtime Database with LocalStorage backup
    ===================================================================== */
 const Data = {
-  mode: 'local',
+  mode: 'local',        // 'firebase' | 'local' | 'memory'
   db: null,
   racks: [],
   bags: [],
 
-  _safeRead(key){
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e){
-      console.warn('[Data] Failed to parse', key, e);
-      return [];
-    }
-  },
-
   async init(){
-    const cfgOk = FIREBASE_CONFIG.apiKey &&
-                  !String(FIREBASE_CONFIG.apiKey).startsWith('YOUR_') &&
-                  FIREBASE_CONFIG.projectId &&
-                  !String(FIREBASE_CONFIG.projectId).startsWith('YOUR_');
+    const localOk = Storage.test();
 
-    if (cfgOk && typeof firebase !== 'undefined'){
+    // Try Firebase Realtime Database
+    if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.databaseURL){
       try{
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-        this.db = firebase.firestore();
-        await this.db.collection('racks').limit(1).get();
+        this.db = firebase.database();
+
+        // Connection test with timeout so we don't hang forever
+        await Promise.race([
+          this.db.ref(DB_ROOT).once('value'),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 8000))
+        ]);
+
         this.mode = 'firebase';
       }catch(e){
-        console.warn('[Firebase] Connection failed — using LocalStorage:', e.message);
-        this.mode = 'local';
+        console.warn('[Firebase RTDB] init failed — using LocalStorage:', e.message);
+        this.mode = localOk ? 'local' : 'memory';
       }
+    } else {
+      this.mode = localOk ? 'local' : 'memory';
     }
+
     await this.loadAll();
     UI.updateConn();
+
+    // Attach live listener so any change from another tab/device syncs in
+    if (this.mode === 'firebase' && this.db){
+      try{
+        this.db.ref(DB_ROOT).on('value', (snap) => {
+          const v = snap.val() || {};
+          const racksObj = v.racks || {};
+          const bagsObj  = v.bags  || {};
+          this.racks = Object.values(racksObj).filter(Boolean);
+          this.bags  = Object.values(bagsObj).filter(Boolean);
+          this._sort();
+          this._persist();       // refresh local backup
+          try { UI.refreshAll(); } catch(_){}
+        });
+      }catch(e){ console.warn('[Firebase RTDB] listener failed:', e.message); }
+    }
   },
 
   async loadAll(){
     try {
       if (this.mode === 'firebase' && this.db){
-        const [r, b] = await Promise.all([
-          this.db.collection('racks').get(),
-          this.db.collection('bags').get()
-        ]);
-        this.racks = r.docs.map(d => d.data()).filter(Boolean);
-        this.bags  = b.docs.map(d => d.data()).filter(Boolean);
+        const snap = await this.db.ref(DB_ROOT).once('value');
+        const v = snap.val() || {};
+        this.racks = Object.values(v.racks || {}).filter(Boolean);
+        this.bags  = Object.values(v.bags  || {}).filter(Boolean);
       } else {
-        this.racks = this._safeRead('teastore_racks_v2');
-        this.bags  = this._safeRead('teastore_bags_v2');
+        this.racks = Storage.read('teastore_racks_v2') || [];
+        this.bags  = Storage.read('teastore_bags_v2')  || [];
       }
     } catch (err){
-      console.error('[Data.loadAll] Error:', err);
-      this.racks = [];
-      this.bags  = [];
+      console.error('[Data.loadAll] error:', err);
+      this.racks = Storage.read('teastore_racks_v2') || [];
+      this.bags  = Storage.read('teastore_bags_v2')  || [];
     }
 
     if (!Array.isArray(this.racks)) this.racks = [];
     if (!Array.isArray(this.bags))  this.bags  = [];
+    this._sort();
+  },
 
+  _sort(){
     this.racks.sort((a,b) => {
       const rc = String(a.row||'').localeCompare(String(b.row||''));
       if (rc !== 0) return rc;
@@ -771,32 +866,32 @@ const Data = {
   },
 
   _persist(){
-    if (this.mode === 'local'){
-      try {
-        localStorage.setItem('teastore_racks_v2', JSON.stringify(this.racks));
-        localStorage.setItem('teastore_bags_v2',  JSON.stringify(this.bags));
-      } catch (e){
-        console.warn('[Data] Persist failed:', e);
-      }
-    }
+    Storage.write('teastore_racks_v2', this.racks);
+    Storage.write('teastore_bags_v2',  this.bags);
   },
 
+  /* ---- Racks ---- */
   async addRack(rack){
     if (!rack || !rack.id) return false;
     if (this.racks.some(r => r.id === rack.id)) return false;
 
+    // Write to Firebase (best-effort)
     if (this.mode === 'firebase' && this.db){
-      await this.db.collection('racks').doc(rack.id).set(rack);
+      try {
+        await this.db.ref(`${DB_ROOT}/racks/${rack.id}`).set(rack);
+      } catch (e){
+        console.warn('[RTDB] rack write failed — falling back to local:', e.message);
+        this.mode = Storage.available ? 'local' : 'memory';
+        UI.updateConn();
+        toast('Cloud write failed — saved locally instead.', 'warn', 4200);
+      }
     }
 
-    this.racks.push(rack);
-    this.racks.sort((a,b) => {
-      const rc = String(a.row||'').localeCompare(String(b.row||''));
-      if (rc !== 0) return rc;
-      const sc = String(a.side||'').localeCompare(String(b.side||''));
-      if (sc !== 0) return sc;
-      return (a.pos||0) - (b.pos||0);
-    });
+    // Always keep a local copy so nothing is lost
+    if (!this.racks.some(r => r.id === rack.id)){
+      this.racks.push(rack);
+    }
+    this._sort();
     this._persist();
     return true;
   },
@@ -805,25 +900,59 @@ const Data = {
     const r = this.racks.find(x => x.id === id);
     if (!r) return;
     Object.assign(r, patch);
-    if (this.mode === 'firebase' && this.db) await this.db.collection('racks').doc(id).set(r);
+
+    if (this.mode === 'firebase' && this.db){
+      try { await this.db.ref(`${DB_ROOT}/racks/${id}`).update(patch); }
+      catch (e){ console.warn('[RTDB] update failed:', e.message); }
+    }
     this._persist();
   },
 
+  /* ---- Bags ---- */
   async addBag(bag){
+    // local duplicate check
     if (this.bags.some(b => b.ufid === bag.ufid)) throw new Error('DUPLICATE');
+
+    // Firestore/RTDB attempt
     if (this.mode === 'firebase' && this.db){
-      const ref  = this.db.collection('bags').doc(bag.ufid);
-      const snap = await ref.get();
-      if (snap.exists) throw new Error('DUPLICATE');
-      await ref.set(bag);
+      try {
+        const ref  = this.db.ref(`${DB_ROOT}/bags/${bag.ufid}`);
+        const snap = await ref.once('value');
+        if (snap.exists()) throw new Error('DUPLICATE');
+        await ref.set(bag);
+      } catch (e){
+        if (e.message === 'DUPLICATE') throw e;
+        console.warn('[RTDB] bag write failed — falling back to local:', e.message);
+        this.mode = Storage.available ? 'local' : 'memory';
+        UI.updateConn();
+        toast('Cloud sync unavailable — saved locally instead.', 'warn', 4200);
+      }
     }
-    this.bags.unshift(bag);
+
+    // Always keep local copy
+    if (!this.bags.some(b => b.ufid === bag.ufid)){
+      this.bags.unshift(bag);
+    }
+    this._sort();
     this._persist();
   },
 
   async deleteBag(ufid){
-    if (this.mode === 'firebase' && this.db) await this.db.collection('bags').doc(ufid).delete();
+    if (this.mode === 'firebase' && this.db){
+      try { await this.db.ref(`${DB_ROOT}/bags/${ufid}`).remove(); }
+      catch (e){ console.warn('[RTDB] delete failed:', e.message); }
+    }
     this.bags = this.bags.filter(b => b.ufid !== ufid);
+    this._persist();
+  },
+
+  async clearAll(){
+    if (this.mode === 'firebase' && this.db){
+      try { await this.db.ref(DB_ROOT).remove(); }
+      catch (e){ console.warn('[RTDB] clear failed:', e.message); }
+    }
+    this.racks = [];
+    this.bags  = [];
     this._persist();
   },
 
@@ -860,7 +989,7 @@ const UI = {
     $('#pageSub').textContent   = titles[view][1];
 
     if (view === 'map'){ MapView.ensure(); setTimeout(() => MapView.map && MapView.map.invalidateSize(), 120); }
-    if (view === 'scan') setTimeout(() => $('#ufidInput') && $('#ufidInput').focus(), 200);
+    if (view === 'scan') setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 200);
     if (view === 'dashboard') this.renderDashboard();
   },
 
@@ -868,9 +997,11 @@ const UI = {
     const dot = $('#connDot'), txt = $('#connTxt');
     if (!dot || !txt) return;
     if (Data.mode === 'firebase'){
-      dot.className = 'dot live'; txt.textContent = 'Firebase Connected';
+      dot.className = 'dot live'; txt.textContent = 'Firebase RTDB Connected';
+    } else if (Data.mode === 'local'){
+      dot.className = 'dot off';  txt.textContent = 'Local Storage';
     } else {
-      dot.className = 'dot off';  txt.textContent = 'Local Storage (Offline)';
+      dot.className = 'dot err';  txt.textContent = 'Memory only';
     }
   },
 
@@ -984,7 +1115,7 @@ const UI = {
         c.addEventListener('click', () => {
           $('#rackInput').value = c.dataset.rack;
           UI.go('scan');
-          setTimeout(() => $('#ufidInput') && $('#ufidInput').focus(), 250);
+          setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 250);
         });
       });
     }
@@ -1004,7 +1135,6 @@ const UI = {
       : `<div class="empty" style="padding:26px"><p>No data</p></div>`;
   },
 
-  /* ================= FIXED: addRacks ================= */
   async addRacks(){
     try {
       const rowSel   = $('#rowSelect');
@@ -1012,7 +1142,7 @@ const UI = {
       const sideSel  = $('#sideSelect');
 
       if (!rowSel || !countInp || !sideSel){
-        toast('Form elements are missing from the page.', 'err');
+        toast('Form elements missing.', 'err');
         return;
       }
 
@@ -1021,7 +1151,6 @@ const UI = {
       const count    = (isNaN(rawCount) || rawCount < 1) ? 1 : Math.min(rawCount, 200);
       const sides    = sideSel.value || 'LR';
 
-      // Determine which row to create
       let row;
       if (selVal === '__new__' || !selVal){
         const existing = Array.from(new Set(Data.racks.map(r => r.row).filter(Boolean)));
@@ -1050,13 +1179,128 @@ const UI = {
       this.refreshAll();
 
       if (added > 0){
-        toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row} ✅`, 'ok');
+        toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row}`, 'ok');
       } else {
         toast('No new racks were added (they may already exist).', 'info');
       }
     } catch (err){
-      console.error('[addRacks] Fatal error:', err);
+      console.error('[addRacks] error:', err);
       toast('Failed to add racks: ' + (err && err.message ? err.message : 'Unknown error'), 'err');
+    }
+  },
+
+  /* ======================= SAVE BAG ======================= */
+  async saveBag(){
+    console.group('🔎 Save Bag attempt');
+    try {
+      const parsed = this.parseScan($('#ufidInput').value);
+      const ufid   = parsed.ufid;
+
+      let signal = parsed.sig;
+      if (signal === null) signal = parseFloat($('#signalInput').value);
+      if (isNaN(signal)) signal = 0;
+
+      const rackId  = String($('#rackInput').value || '').trim().toUpperCase();
+      const invoice = String($('#invoiceInput').value || '').trim();
+      const boxNo   = String($('#boxInput').value || '').trim();
+      const company = String($('#companyInput').value || '').trim();
+      const kgRaw   = $('#kgInput').value;
+      const kg      = parseFloat(kgRaw);
+      const bop     = String($('#bopInput').value || '').trim();
+
+      console.log({ ufid, signal, rackId, invoice, boxNo, company, kgRaw, kg, bop });
+      console.log('Racks:', Data.racks.map(r => r.id));
+      console.log('Mode:', Data.mode, '| localStorage:', Storage.available);
+
+      const ufidEl = $('#ufidInput');
+      const hint   = $('#scanHint');
+
+      const fail = (msg, fieldSel) => {
+        if (fieldSel){
+          const f = $(fieldSel);
+          if (f){
+            f.classList.add('err');
+            setTimeout(() => f.classList.remove('err'), 800);
+            try { f.focus(); } catch(_){}
+          }
+        }
+        if (ufidEl){
+          ufidEl.classList.remove('ok'); ufidEl.classList.add('err');
+          setTimeout(() => ufidEl.classList.remove('err'), 500);
+        }
+        if (hint){
+          hint.className = 'hint err';
+          hint.innerHTML = `<span>⛔</span><span>${msg}</span>`;
+        }
+        this.setScanStatus('Validation failed', 'err');
+        toast(msg, 'err', 4800);
+        console.warn('❌ Save blocked:', msg);
+      };
+
+      /* Field-by-field validation */
+      if (!ufid)                          return fail('UFID tag is required.', '#ufidInput');
+      if (!ufid.startsWith(UFID_PREFIX))  return fail(`UFID must start with "${UFID_PREFIX}" (got "${escapeHtml(ufid)}").`, '#ufidInput');
+      if (ufid.length < UFID_MIN_LEN)     return fail(`UFID must be at least ${UFID_MIN_LEN} characters (got ${ufid.length}).`, '#ufidInput');
+      if (signal < MIN_SIGNAL)            return fail(`Signal is ${signal}% — minimum is ${MIN_SIGNAL}%.`, '#signalInput');
+      if (!rackId)                        return fail('Rack ID is required.', '#rackInput');
+
+      if (!Data.racks.some(r => r.id === rackId)){
+        const sample = Data.racks.slice(0, 6).map(r => r.id).join(', ') || 'none';
+        return fail(`Rack "${escapeHtml(rackId)}" does not exist. Available: ${escapeHtml(sample)}`, '#rackInput');
+      }
+      if (!invoice)             return fail('Supply Name / Invoice No is required.', '#invoiceInput');
+      if (!boxNo)               return fail('Box No is required.', '#boxInput');
+      if (!company)             return fail('Company is required.', '#companyInput');
+      if (isNaN(kg) || kg <= 0) return fail('Weight (KG) must be a positive number.', '#kgInput');
+      if (!bop)                 return fail('Please select a BOP category.', '#bopInput');
+
+      if (Data.bags.some(b => b.ufid === ufid)){
+        return fail(`UFID "${escapeHtml(ufid)}" is already registered (duplicate).`, '#ufidInput');
+      }
+
+      const bag = {
+        ufid, rackId,
+        row: rackId.split('-')[0],
+        side: rackId.split('-')[1],
+        signal: Number(signal),
+        invoice, boxNo, company,
+        kg: Number(kg), bop,
+        scannedAt: Date.now()
+      };
+
+      await Data.addBag(bag);
+
+      /* Success feedback */
+      flash();
+      if (ufidEl){
+        ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
+        setTimeout(() => ufidEl.classList.remove('ok'), 1200);
+      }
+      if (hint){
+        hint.className = 'hint ok';
+        hint.innerHTML = `<span>✅</span><span><b>${escapeHtml(ufid)}</b> → <b>${escapeHtml(rackId)}</b> saved. (${escapeHtml(bop)} • ${kg} KG • ${Number(signal).toFixed(0)}% signal)</span>`;
+      }
+      this.setScanStatus('Saved successfully', 'ok');
+      toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
+
+      /* Reset scanner */
+      if (ufidEl) ufidEl.value = '';
+      $('#boxInput').value = '';
+      $('#kgInput').value  = '';
+      $('#bopInput').value = '';
+      $('#signalInput').value = 98;
+      this.updateSigBar();
+      if (ufidEl) ufidEl.focus();
+
+      this.refreshAll();
+      this.renderScan();
+
+    } catch (err){
+      console.error('[saveBag] fatal:', err);
+      toast('Save failed: ' + (err && err.message ? err.message : 'Unknown error'), 'err', 5500);
+      this.setScanStatus('Save failed', 'err');
+    } finally {
+      console.groupEnd();
     }
   },
 
@@ -1067,6 +1311,9 @@ const UI = {
 
     const cl = $('#companyList');
     if (cl) cl.innerHTML = Data.uniqueCompanies().map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
+
+    const qr = $('#quickRackBox');
+    if (qr) qr.style.display = Data.racks.length === 0 ? 'block' : 'none';
 
     const rec = $('#scanRecent');
     const latest = Data.bags.slice(0, 10);
@@ -1101,89 +1348,6 @@ const UI = {
     const el = $('#scanStatus'); if (!el) return;
     const dotCls = cls === 'err' ? 'off' : 'live';
     el.innerHTML = `<span class="dot ${dotCls}"></span> ${text}`;
-  },
-
-  async saveBag(){
-    const parsed = this.parseScan($('#ufidInput').value);
-    const ufid   = parsed.ufid;
-
-    let signal = parsed.sig;
-    if (signal === null) signal = parseFloat($('#signalInput').value);
-    if (isNaN(signal)) signal = 0;
-
-    const rackId  = $('#rackInput').value.trim().toUpperCase();
-    const invoice = $('#invoiceInput').value.trim();
-    const boxNo   = $('#boxInput').value.trim();
-    const company = $('#companyInput').value.trim();
-    const kg      = parseFloat($('#kgInput').value);
-    const bop     = $('#bopInput').value.trim();
-
-    const ufidEl = $('#ufidInput');
-    const hint   = $('#scanHint');
-
-    const fail = (msg) => {
-      ufidEl.classList.remove('ok'); ufidEl.classList.add('err');
-      setTimeout(() => ufidEl.classList.remove('err'), 500);
-      hint.className = 'hint err';
-      hint.innerHTML = `<span>⛔</span><span>${msg}</span>`;
-      this.setScanStatus('Validation failed', 'err');
-      toast(msg, 'err');
-    };
-
-    if (!ufid) return fail('UFID tag is required.');
-    if (!ufid.startsWith(UFID_PREFIX))
-      return fail(`UFID must start with "${UFID_PREFIX}" (received: ${escapeHtml(ufid)})`);
-    if (ufid.length < UFID_MIN_LEN)
-      return fail(`UFID must be at least ${UFID_MIN_LEN} characters long.`);
-    if (signal < MIN_SIGNAL)
-      return fail(`Signal strength ${signal}% is below the minimum of ${MIN_SIGNAL}%. Re-scan the tag.`);
-    if (!rackId) return fail('Please select a rack.');
-    if (!Data.racks.some(r => r.id === rackId))
-      return fail(`Rack "${escapeHtml(rackId)}" does not exist.`);
-    if (!invoice) return fail('Supply Name / Invoice No is required.');
-    if (!boxNo)   return fail('Box No is required.');
-    if (!company) return fail('Company is required.');
-    if (isNaN(kg) || kg <= 0) return fail('Please enter a valid weight in KG.');
-    if (!bop)     return fail('Please select a BOP category.');
-    if (Data.bags.some(b => b.ufid === ufid))
-      return fail(`UFID "${escapeHtml(ufid)}" is already registered (duplicate).`);
-
-    const bag = {
-      ufid, rackId,
-      row: rackId.split('-')[0],
-      side: rackId.split('-')[1],
-      signal: Number(signal),
-      invoice, boxNo, company,
-      kg: Number(kg), bop,
-      scannedAt: Date.now()
-    };
-
-    try{
-      await Data.addBag(bag);
-    }catch(e){
-      if (e.message === 'DUPLICATE') return fail(`UFID "${escapeHtml(ufid)}" already exists.`);
-      return fail('Save error: ' + e.message);
-    }
-
-    flash();
-    ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
-    setTimeout(() => ufidEl.classList.remove('ok'), 1200);
-
-    hint.className = 'hint ok';
-    hint.innerHTML = `<span>✅</span><span><b>${escapeHtml(ufid)}</b> → <b>${escapeHtml(rackId)}</b> saved successfully. (${escapeHtml(bop)} • ${kg} KG • ${Number(signal).toFixed(0)}% signal)</span>`;
-    this.setScanStatus('Saved successfully', 'ok');
-    toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
-
-    ufidEl.value = '';
-    $('#boxInput').value = '';
-    $('#kgInput').value  = '';
-    $('#bopInput').value = '';
-    $('#signalInput').value = 98;
-    this.updateSigBar();
-    ufidEl.focus();
-
-    this.refreshAll();
-    this.renderScan();
   },
 
   renderInventory(){
@@ -1285,28 +1449,20 @@ const UI = {
    MAP VIEW
    ===================================================================== */
 const MapView = {
-  map: null,
-  layer: null,
-  userMarker: null,
-  watchId: null,
-  placing: false,
-  inited: false,
+  map: null, layer: null, userMarker: null, watchId: null,
+  placing: false, inited: false,
 
   ensure(){
     if (this.inited) return;
     this.inited = true;
-
     if (typeof L === 'undefined'){
-      $('#map').innerHTML = `<div class="map-fallback">🗺️ Map library failed to load.<br>Please check your internet connection.</div>`;
+      $('#map').innerHTML = `<div class="map-fallback">🗺️ Map library failed to load.</div>`;
       return;
     }
-
     this.map = L.map('map', { zoomControl: true }).setView([6.9271, 79.8612], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap'
+      maxZoom: 19, attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
-
     this.layer = L.layerGroup().addTo(this.map);
 
     this.map.on('click', async (e) => {
@@ -1321,7 +1477,7 @@ const MapView = {
       $('#placeModeBtn').classList.remove('btn-green');
       $('#placeModeBtn').classList.add('btn-ghost');
       $('#mapHint').className = 'hint ok';
-      $('#mapHint').innerHTML = `<span>✅</span><span><b>${escapeHtml(rackId)}</b> location saved (${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)})</span>`;
+      $('#mapHint').innerHTML = `<span>✅</span><span><b>${escapeHtml(rackId)}</b> saved (${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)})</span>`;
       toast(`${rackId} location saved`, 'ok');
       this.renderMarkers();
       UI.renderRacks();
@@ -1340,25 +1496,19 @@ const MapView = {
     btn.classList.toggle('btn-ghost', !this.placing);
     $('#mapHint').className = 'hint ' + (this.placing ? 'warn' : 'info');
     $('#mapHint').innerHTML = this.placing
-      ? `<span>🎯</span><span>Click on the map to set the location for <b>${escapeHtml(rackId)}</b>…</span>`
-      : `<span>📍</span><span>Select a rack, click <b>Place Location</b>, then click on the map to save GPS coordinates.</span>`;
+      ? `<span>🎯</span><span>Click on the map to set location for <b>${escapeHtml(rackId)}</b>…</span>`
+      : `<span>📍</span><span>Select a rack, click <b>Place Location</b>, then click on the map.</span>`;
   },
 
   renderMarkers(){
     if (!this.map || !this.layer) return;
     this.layer.clearLayers();
-
     Data.racks.forEach(r => {
       if (r.lat == null || r.lng == null) return;
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="rm-dot"></div>`,
-        iconSize: [20,20], iconAnchor: [10,10]
-      });
+      const icon = L.divIcon({ className: '', html: `<div class="rm-dot"></div>`, iconSize: [20,20], iconAnchor: [10,10] });
       const m = L.marker([r.lat, r.lng], { icon }).addTo(this.layer);
       const cnt = Data.countIn(r.id);
-      const kg  = Data.bags.filter(b => b.rackId === r.id)
-                          .reduce((s, b) => s + (parseFloat(b.kg) || 0), 0);
+      const kg  = Data.bags.filter(b => b.rackId === r.id).reduce((s, b) => s + (parseFloat(b.kg) || 0), 0);
       m.bindPopup(`
         <div style="font-family:inherit;min-width:180px">
           <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:#0f172a">${escapeHtml(r.id)}</div>
@@ -1374,24 +1524,16 @@ const MapView = {
   },
 
   locateMe(){
-    if (!navigator.geolocation){ toast('Geolocation is not supported by this browser.', 'err'); return; }
-    if (!this.map){ toast('Map is not loaded.', 'err'); return; }
-
-    toast('Locating your position…', 'info');
-
+    if (!navigator.geolocation){ toast('Geolocation not supported.', 'err'); return; }
+    if (!this.map){ toast('Map not loaded.', 'err'); return; }
+    toast('Locating…', 'info');
     if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId);
-
     this.watchId = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-        if (this.userMarker){
-          this.userMarker.setLatLng([lat, lng]);
-        } else {
-          const icon = L.divIcon({
-            className: '',
-            html: `<div class="user-dot" style="animation:pulse 1.8s infinite"></div>`,
-            iconSize: [18,18], iconAnchor: [9,9]
-          });
+        if (this.userMarker) this.userMarker.setLatLng([lat, lng]);
+        else {
+          const icon = L.divIcon({ className: '', html: `<div class="user-dot" style="animation:pulse 1.8s infinite"></div>`, iconSize: [18,18], iconAnchor: [9,9] });
           this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
         }
         this.userMarker.bindPopup(`📍 Your location<br><small>Accuracy ±${accuracy.toFixed(0)} m</small>`);
@@ -1415,11 +1557,10 @@ async function boot(){
   UI.initNav();
   await Data.init();
 
-  /* ---- Event bindings (with null checks so one failure can't kill the rest) ---- */
   const bind = (sel, evt, fn) => {
     const el = $(sel);
     if (el) el.addEventListener(evt, fn);
-    else console.warn('[bind] element not found:', sel);
+    else console.warn('[bind] not found:', sel);
   };
 
   bind('#addRacksBtn', 'click', () => UI.addRacks());
@@ -1427,6 +1568,21 @@ async function boot(){
   bind('#ufidInput',   'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
   bind('#signalInput', 'input', () => UI.updateSigBar());
   bind('#kgInput',     'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
+
+  bind('#qrAddBtn', 'click', async () => {
+    const raw = String($('#qrRackId').value || '').trim().toUpperCase();
+    if (!/^[A-Z]+-[LR]-\d+$/.test(raw)){
+      toast('Format must be like A-L-1 or B-R-3', 'err');
+      return;
+    }
+    const parts = raw.split('-');
+    const ok = await Data.addRack({
+      id: raw, row: parts[0], side: parts[1], pos: parseInt(parts[2], 10),
+      lat: null, lng: null, createdAt: Date.now()
+    });
+    if (ok){ toast(`Rack ${raw} created`, 'ok'); UI.refreshAll(); $('#rackInput').value = raw; }
+    else   { toast('Rack already exists', 'info'); }
+  });
 
   bind('#searchInput', 'input',  () => UI.renderInventory());
   bind('#filterRack',  'change', () => UI.renderInventory());
@@ -1436,14 +1592,22 @@ async function boot(){
   bind('#locateMeBtn', 'click', () => MapView.locateMe());
   bind('#placeModeBtn','click', () => MapView.startPlaceMode());
 
+  bind('#resetBtn', 'click', async () => {
+    if (!confirm('Delete ALL racks and bags? This cannot be undone.')) return;
+    await Data.clearAll();
+    UI.refreshAll();
+    toast('All data cleared', 'info');
+  });
+
   UI.refreshAll();
 
-  toast(
-    Data.mode === 'firebase'
-      ? 'Firebase connected successfully ✅'
-      : 'Running in Local Storage mode',
-    Data.mode === 'firebase' ? 'ok' : 'info'
-  );
+  if (Data.mode === 'firebase'){
+    toast('Firebase Realtime Database connected ✅', 'ok');
+  } else if (Data.mode === 'local'){
+    toast('Running in Local Storage mode (offline)', 'info');
+  } else {
+    toast('Storage not available — data will be lost on reload', 'warn', 6500);
+  }
 
   setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 600);
 }
