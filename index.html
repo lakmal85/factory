@@ -26,7 +26,6 @@ body{
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
 ::-webkit-scrollbar-thumb:hover{background:#94a3b8}
 
-/* ---------- Layout ---------- */
 .app{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
 .sidebar{
   background:linear-gradient(180deg,#ffffff 0%,#f6fbff 60%,#f2fdf9 100%);
@@ -83,12 +82,10 @@ body{
   border:1px solid var(--blue-line);
 }
 
-/* ---------- Views ---------- */
 .view{display:none}
 .view.active{display:block;animation:fadeUp .38s cubic-bezier(.4,0,.2,1)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-/* ---------- Cards ---------- */
 .card{
   background:#fff;border:1px solid var(--line);border-radius:var(--radius);
   padding:20px;box-shadow:var(--shadow-sm);transition:all .25s cubic-bezier(.4,0,.2,1);
@@ -97,7 +94,6 @@ body{
 .card-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
 .card-title .bar{width:4px;height:16px;border-radius:4px;background:linear-gradient(180deg,var(--blue),var(--green))}
 
-/* ---------- Stat cards ---------- */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px}
 .stat{
   position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);
@@ -122,7 +118,6 @@ body{
 }
 .stat-lbl{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.6px}
 
-/* ---------- Grid helpers ---------- */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
@@ -130,7 +125,6 @@ body{
 @media(max-width:1050px){.row-split{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
 
-/* ---------- Forms ---------- */
 .field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
 .field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
 .field label .req{color:#ef4444;margin-left:2px}
@@ -161,7 +155,6 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .btn-sm{padding:7px 13px;font-size:12.5px;border-radius:10px}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
 
-/* ---------- Racks ---------- */
 .row-block{margin-bottom:22px}
 .row-head{
   display:flex;align-items:center;gap:12px;margin-bottom:12px;
@@ -198,7 +191,6 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .side-L{background:var(--blue-soft);color:var(--blue)}
 .side-R{background:var(--green-soft);color:#047857}
 
-/* ---------- Scan ---------- */
 .scan-card{border:2px solid transparent;background:
   linear-gradient(#fff,#fff) padding-box,
   linear-gradient(135deg,var(--blue),var(--green)) border-box;
@@ -238,7 +230,6 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .hint.warn{background:#fffbeb;color:#b45309}
 .hint.err{background:#fef2f2;color:#b91c1c}
 
-/* recent list */
 .mini-list{display:flex;flex-direction:column;gap:9px;max-height:520px;overflow-y:auto;padding-right:4px}
 .mini{
   display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;
@@ -247,7 +238,7 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .mini:hover{background:#fff;border-color:var(--blue-line);transform:translateX(4px)}
 .mini-ico{
   width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:0 0 36px;
-  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;font-size:14px;font-weight:800;
+  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;font-size:13px;font-weight:800;
 }
 .mini-id{font-size:13px;font-weight:800;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
 .mini-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
@@ -256,7 +247,6 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
   background:var(--green-soft);color:#047857;
 }
 
-/* ---------- Table ---------- */
 .table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:1100px}
 thead th{
@@ -279,7 +269,6 @@ tbody tr:last-child td{border-bottom:0}
 .pill-amber{background:#fffbeb;color:#b45309}
 .pill-purple{background:#f5f3ff;color:#7c3aed}
 
-/* ---------- Map ---------- */
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);z-index:1}
 .leaflet-container{font-family:inherit}
 .rm-dot{
@@ -293,7 +282,6 @@ tbody tr:last-child td{border-bottom:0}
 }
 .map-fallback{padding:40px;text-align:center;color:var(--muted);font-weight:600}
 
-/* ---------- Toast ---------- */
 #toasts{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:11px;pointer-events:none}
 .toast{
   min-width:280px;max-width:400px;padding:14px 18px;border-radius:14px;background:#fff;
@@ -344,7 +332,6 @@ tbody tr:last-child td{border-bottom:0}
 <body>
 
 <div class="app">
-  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-logo">🍃</div>
@@ -355,23 +342,23 @@ tbody tr:last-child td{border-bottom:0}
     </div>
 
     <nav class="nav">
-      <button class="nav-item active" data-view="dashboard">
+      <button type="button" class="nav-item active" data-view="dashboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
         <span>Dashboard</span>
       </button>
-      <button class="nav-item" data-view="racks">
+      <button type="button" class="nav-item" data-view="racks">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
         <span>Racks</span>
       </button>
-      <button class="nav-item" data-view="scan">
+      <button type="button" class="nav-item" data-view="scan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg>
         <span>UFID Scanner</span>
       </button>
-      <button class="nav-item" data-view="map">
+      <button type="button" class="nav-item" data-view="map">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         <span>Live Map</span>
       </button>
-      <button class="nav-item" data-view="inventory">
+      <button type="button" class="nav-item" data-view="inventory">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"/><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M10 12h4"/></svg>
         <span>Inventory</span>
       </button>
@@ -383,7 +370,6 @@ tbody tr:last-child td{border-bottom:0}
     </div>
   </aside>
 
-  <!-- ============ MAIN ============ -->
   <main class="main">
     <div class="topbar">
       <div>
@@ -393,7 +379,7 @@ tbody tr:last-child td{border-bottom:0}
       <div class="clock" id="clock">--:--:--</div>
     </div>
 
-    <!-- ===== DASHBOARD ===== -->
+    <!-- DASHBOARD -->
     <section class="view active" id="view-dashboard">
       <div class="stats">
         <div class="stat">
@@ -430,7 +416,7 @@ tbody tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ===== RACKS ===== -->
+    <!-- RACKS -->
     <section class="view" id="view-racks">
       <div class="row-split">
         <div>
@@ -454,7 +440,7 @@ tbody tr:last-child td{border-bottom:0}
                 </select>
               </div>
             </div>
-            <button class="btn btn-primary" id="addRacksBtn">
+            <button type="button" class="btn btn-primary" id="addRacksBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
               Add Racks
             </button>
@@ -477,7 +463,7 @@ tbody tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ===== SCAN ===== -->
+    <!-- SCAN -->
     <section class="view" id="view-scan">
       <div class="row-split">
         <div class="card scan-card">
@@ -553,7 +539,7 @@ tbody tr:last-child td{border-bottom:0}
             </div>
           </div>
 
-          <button class="btn btn-primary btn-block" id="saveBagBtn" style="margin-top:10px">
+          <button type="button" class="btn btn-primary btn-block" id="saveBagBtn" style="margin-top:10px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
             Save Bag to Rack
           </button>
@@ -571,7 +557,7 @@ tbody tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <!-- ===== MAP ===== -->
+    <!-- MAP -->
     <section class="view" id="view-map">
       <div class="card" style="margin-bottom:16px">
         <div class="toolbar" style="margin-bottom:0">
@@ -580,11 +566,11 @@ tbody tr:last-child td{border-bottom:0}
             <input id="mapRackInput" list="rackList2" placeholder="A-L-1" autocomplete="off" />
             <datalist id="rackList2"></datalist>
           </div>
-          <button class="btn btn-ghost btn-sm" id="locateMeBtn" style="margin-top:18px">
+          <button type="button" class="btn btn-ghost btn-sm" id="locateMeBtn" style="margin-top:18px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
             My Location
           </button>
-          <button class="btn btn-green btn-sm" id="placeModeBtn" style="margin-top:18px">
+          <button type="button" class="btn btn-green btn-sm" id="placeModeBtn" style="margin-top:18px">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
             Place Location
           </button>
@@ -597,7 +583,7 @@ tbody tr:last-child td{border-bottom:0}
       <div id="map"></div>
     </section>
 
-    <!-- ===== INVENTORY ===== -->
+    <!-- INVENTORY -->
     <section class="view" id="view-inventory">
       <div class="card">
         <div class="card-title"><span class="bar"></span>Inventory Register</div>
@@ -608,7 +594,7 @@ tbody tr:last-child td{border-bottom:0}
           <div class="spacer"></div>
           <span class="pill pill-blue" id="invCount">0 bags</span>
           <span class="pill pill-green" id="invKG">0 KG</span>
-          <button class="btn btn-ghost btn-sm" id="exportBtn">
+          <button type="button" class="btn btn-ghost btn-sm" id="exportBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
             Export CSV
           </button>
@@ -645,12 +631,7 @@ tbody tr:last-child td{border-bottom:0}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* =====================================================================
-   1.  FIREBASE CONFIGURATION
-   ---------------------------------------------------------------------
-   ⚠️  Only the API key has been provided. For Firebase to work you MUST
-       also replace the placeholder values below with your actual project
-       settings (Firebase Console → Project Settings → Web App).
-       Until then, the app automatically falls back to LocalStorage.
+   FIREBASE CONFIG
    ===================================================================== */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyABuZWbNXGJ359mbctDsX-SSxwkUd3v1KY",
@@ -662,24 +643,29 @@ const FIREBASE_CONFIG = {
   appId: "1:36925529487:web:385e1af7ba174f8440fffa"
 };
 
-const MIN_SIGNAL   = 98;      // Minimum accepted signal strength (%)
-const UFID_PREFIX  = "6M";    // UFID must start with this prefix
-const UFID_MIN_LEN = 6;       // Minimum UFID character length
+const MIN_SIGNAL   = 98;
+const UFID_PREFIX  = "6M";
+const UFID_MIN_LEN = 6;
 
 /* =====================================================================
-   2.  UTILITIES
+   UTILITIES
    ===================================================================== */
 const $  = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
 
 function rowLabel(i){
-  let s = '', n = i + 1;
+  let s = '', n = Math.max(0, i) + 1;
   while (n > 0){ const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
   return s;
 }
 function rowIndex(label){
+  if (!label) return 0;
   let n = 0;
-  for (const ch of label.toUpperCase()) n = n * 26 + (ch.charCodeAt(0) - 64);
+  for (const ch of String(label).toUpperCase()){
+    const c = ch.charCodeAt(0);
+    if (c < 65 || c > 90) continue;
+    n = n * 26 + (c - 64);
+  }
   return n - 1;
 }
 function fmtTime(ts){
@@ -691,11 +677,12 @@ function isToday(ts){
   return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
 }
 function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function toast(msg, type = 'ok'){
   const box = $('#toasts');
+  if (!box) return;
   const el  = document.createElement('div');
   el.className = `toast ${type}`;
   const ico = type === 'ok' ? '✅' : type === 'err' ? '⚠️' : 'ℹ️';
@@ -705,11 +692,12 @@ function toast(msg, type = 'ok'){
 }
 function flash(){
   const f = $('#flash');
+  if (!f) return;
   f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
 }
 
 /* =====================================================================
-   3.  DATA LAYER (Firebase Firestore → LocalStorage fallback)
+   DATA LAYER
    ===================================================================== */
 const Data = {
   mode: 'local',
@@ -717,11 +705,23 @@ const Data = {
   racks: [],
   bags: [],
 
+  _safeRead(key){
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e){
+      console.warn('[Data] Failed to parse', key, e);
+      return [];
+    }
+  },
+
   async init(){
     const cfgOk = FIREBASE_CONFIG.apiKey &&
-                  !FIREBASE_CONFIG.apiKey.startsWith('YOUR_') &&
+                  !String(FIREBASE_CONFIG.apiKey).startsWith('YOUR_') &&
                   FIREBASE_CONFIG.projectId &&
-                  !FIREBASE_CONFIG.projectId.startsWith('YOUR_');
+                  !String(FIREBASE_CONFIG.projectId).startsWith('YOUR_');
 
     if (cfgOk && typeof firebase !== 'undefined'){
       try{
@@ -730,7 +730,7 @@ const Data = {
         await this.db.collection('racks').limit(1).get();
         this.mode = 'firebase';
       }catch(e){
-        console.warn('[Firebase] Connection failed — falling back to LocalStorage:', e.message);
+        console.warn('[Firebase] Connection failed — using LocalStorage:', e.message);
         this.mode = 'local';
       }
     }
@@ -739,34 +739,64 @@ const Data = {
   },
 
   async loadAll(){
-    if (this.mode === 'firebase'){
-      const [r, b] = await Promise.all([
-        this.db.collection('racks').get(),
-        this.db.collection('bags').get()
-      ]);
-      this.racks = r.docs.map(d => d.data());
-      this.bags  = b.docs.map(d => d.data());
-    } else {
-      this.racks = JSON.parse(localStorage.getItem('teastore_racks_v2') || '[]');
-      this.bags  = JSON.parse(localStorage.getItem('teastore_bags_v2')  || '[]');
+    try {
+      if (this.mode === 'firebase' && this.db){
+        const [r, b] = await Promise.all([
+          this.db.collection('racks').get(),
+          this.db.collection('bags').get()
+        ]);
+        this.racks = r.docs.map(d => d.data()).filter(Boolean);
+        this.bags  = b.docs.map(d => d.data()).filter(Boolean);
+      } else {
+        this.racks = this._safeRead('teastore_racks_v2');
+        this.bags  = this._safeRead('teastore_bags_v2');
+      }
+    } catch (err){
+      console.error('[Data.loadAll] Error:', err);
+      this.racks = [];
+      this.bags  = [];
     }
-    this.racks.sort((a,b) => a.row.localeCompare(b.row) || a.side.localeCompare(b.side) || a.pos - b.pos);
-    this.bags.sort((a,b) => b.scannedAt - a.scannedAt);
+
+    if (!Array.isArray(this.racks)) this.racks = [];
+    if (!Array.isArray(this.bags))  this.bags  = [];
+
+    this.racks.sort((a,b) => {
+      const rc = String(a.row||'').localeCompare(String(b.row||''));
+      if (rc !== 0) return rc;
+      const sc = String(a.side||'').localeCompare(String(b.side||''));
+      if (sc !== 0) return sc;
+      return (a.pos||0) - (b.pos||0);
+    });
+    this.bags.sort((a,b) => (b.scannedAt||0) - (a.scannedAt||0));
   },
 
   _persist(){
     if (this.mode === 'local'){
-      localStorage.setItem('teastore_racks_v2', JSON.stringify(this.racks));
-      localStorage.setItem('teastore_bags_v2',  JSON.stringify(this.bags));
+      try {
+        localStorage.setItem('teastore_racks_v2', JSON.stringify(this.racks));
+        localStorage.setItem('teastore_bags_v2',  JSON.stringify(this.bags));
+      } catch (e){
+        console.warn('[Data] Persist failed:', e);
+      }
     }
   },
 
-  /* ---- Racks ---- */
   async addRack(rack){
+    if (!rack || !rack.id) return false;
     if (this.racks.some(r => r.id === rack.id)) return false;
-    if (this.mode === 'firebase') await this.db.collection('racks').doc(rack.id).set(rack);
+
+    if (this.mode === 'firebase' && this.db){
+      await this.db.collection('racks').doc(rack.id).set(rack);
+    }
+
     this.racks.push(rack);
-    this.racks.sort((a,b) => a.row.localeCompare(b.row) || a.side.localeCompare(b.side) || a.pos - b.pos);
+    this.racks.sort((a,b) => {
+      const rc = String(a.row||'').localeCompare(String(b.row||''));
+      if (rc !== 0) return rc;
+      const sc = String(a.side||'').localeCompare(String(b.side||''));
+      if (sc !== 0) return sc;
+      return (a.pos||0) - (b.pos||0);
+    });
     this._persist();
     return true;
   },
@@ -775,14 +805,13 @@ const Data = {
     const r = this.racks.find(x => x.id === id);
     if (!r) return;
     Object.assign(r, patch);
-    if (this.mode === 'firebase') await this.db.collection('racks').doc(id).set(r);
+    if (this.mode === 'firebase' && this.db) await this.db.collection('racks').doc(id).set(r);
     this._persist();
   },
 
-  /* ---- Bags ---- */
   async addBag(bag){
     if (this.bags.some(b => b.ufid === bag.ufid)) throw new Error('DUPLICATE');
-    if (this.mode === 'firebase'){
+    if (this.mode === 'firebase' && this.db){
       const ref  = this.db.collection('bags').doc(bag.ufid);
       const snap = await ref.get();
       if (snap.exists) throw new Error('DUPLICATE');
@@ -793,7 +822,7 @@ const Data = {
   },
 
   async deleteBag(ufid){
-    if (this.mode === 'firebase') await this.db.collection('bags').doc(ufid).delete();
+    if (this.mode === 'firebase' && this.db) await this.db.collection('bags').doc(ufid).delete();
     this.bags = this.bags.filter(b => b.ufid !== ufid);
     this._persist();
   },
@@ -804,7 +833,7 @@ const Data = {
 };
 
 /* =====================================================================
-   4.  UI CONTROLLER
+   UI CONTROLLER
    ===================================================================== */
 const UI = {
   currentView: 'dashboard',
@@ -831,12 +860,13 @@ const UI = {
     $('#pageSub').textContent   = titles[view][1];
 
     if (view === 'map'){ MapView.ensure(); setTimeout(() => MapView.map && MapView.map.invalidateSize(), 120); }
-    if (view === 'scan') setTimeout(() => $('#ufidInput').focus(), 200);
+    if (view === 'scan') setTimeout(() => $('#ufidInput') && $('#ufidInput').focus(), 200);
     if (view === 'dashboard') this.renderDashboard();
   },
 
   updateConn(){
     const dot = $('#connDot'), txt = $('#connTxt');
+    if (!dot || !txt) return;
     if (Data.mode === 'firebase'){
       dot.className = 'dot live'; txt.textContent = 'Firebase Connected';
     } else {
@@ -844,15 +874,13 @@ const UI = {
     }
   },
 
-  /* ---------- DASHBOARD ---------- */
   renderDashboard(){
-    const rows = new Set(Data.racks.map(r => r.row));
+    const rows = new Set(Data.racks.map(r => r.row).filter(Boolean));
     $('#stBags').textContent  = Data.bags.length;
     $('#stRacks').textContent = Data.racks.length;
     $('#stKG').textContent    = Data.totalKG().toFixed(1);
     $('#stToday').textContent = Data.bags.filter(b => isToday(b.scannedAt)).length;
 
-    /* Row chart */
     const chart = $('#rowChart');
     if (!Data.racks.length){
       chart.innerHTML = `<div class="empty"><div class="empty-ico">📦</div><h3>No racks yet</h3><p>Add your first row from the <b>Racks</b> section</p></div>`;
@@ -899,16 +927,22 @@ const UI = {
       </div>`;
   },
 
-  /* ---------- RACKS ---------- */
   renderRacks(){
-    const rows = Array.from(new Set(Data.racks.map(r => r.row))).sort((a,b) => rowIndex(a) - rowIndex(b));
-    const nextLabel = rowLabel(rows.length ? Math.max(...rows.map(rowIndex)) + 1 : 0);
+    const rows = Array.from(new Set(Data.racks.map(r => r.row).filter(Boolean)))
+      .sort((a,b) => rowIndex(a) - rowIndex(b));
+
+    let maxIdx = -1;
+    rows.forEach(r => { const i = rowIndex(r); if (i > maxIdx) maxIdx = i; });
+    const nextLabel = rowLabel(maxIdx + 1);
+
     const sel = $('#rowSelect');
-    const prev = sel.value;
-    sel.innerHTML =
-      `<option value="__new__">➕ New row — ${nextLabel}</option>` +
-      rows.map(r => `<option value="${escapeHtml(r)}">Row ${escapeHtml(r)}</option>`).join('');
-    sel.value = (prev && Array.from(sel.options).some(o => o.value === prev)) ? prev : '__new__';
+    if (sel){
+      const prev = sel.value;
+      sel.innerHTML =
+        `<option value="__new__">➕ New row — ${nextLabel}</option>` +
+        rows.map(r => `<option value="${escapeHtml(r)}">Row ${escapeHtml(r)}</option>`).join('');
+      sel.value = (prev && Array.from(sel.options).some(o => o.value === prev)) ? prev : '__new__';
+    }
 
     const tree = $('#rackTree');
     if (!Data.racks.length){
@@ -919,7 +953,11 @@ const UI = {
       const keys = Object.keys(grouped).sort((a,b) => rowIndex(a) - rowIndex(b));
 
       tree.innerHTML = keys.map(k => {
-        const list = grouped[k].sort((a,b) => a.side.localeCompare(b.side) || a.pos - b.pos);
+        const list = grouped[k].sort((a,b) => {
+          const sc = String(a.side).localeCompare(String(b.side));
+          if (sc !== 0) return sc;
+          return (a.pos||0) - (b.pos||0);
+        });
         const total = list.reduce((s, r) => s + Data.countIn(r.id), 0);
         return `
           <div class="row-block">
@@ -946,7 +984,7 @@ const UI = {
         c.addEventListener('click', () => {
           $('#rackInput').value = c.dataset.rack;
           UI.go('scan');
-          setTimeout(() => $('#ufidInput').focus(), 250);
+          setTimeout(() => $('#ufidInput') && $('#ufidInput').focus(), 250);
         });
       });
     }
@@ -966,39 +1004,69 @@ const UI = {
       : `<div class="empty" style="padding:26px"><p>No data</p></div>`;
   },
 
+  /* ================= FIXED: addRacks ================= */
   async addRacks(){
-    const selVal = $('#rowSelect').value;
-    const count  = Math.max(1, Math.min(200, parseInt($('#rackCount').value) || 1));
-    const sides  = $('#sideSelect').value;
+    try {
+      const rowSel   = $('#rowSelect');
+      const countInp = $('#rackCount');
+      const sideSel  = $('#sideSelect');
 
-    const rows = Array.from(new Set(Data.racks.map(r => r.row)));
-    const row = selVal === '__new__'
-      ? rowLabel(rows.length ? Math.max(...rows.map(rowIndex)) + 1 : 0)
-      : selVal;
-
-    const sideList = sides === 'LR' ? ['L','R'] : [sides];
-    let added = 0;
-
-    for (let p = 1; p <= count; p++){
-      for (const s of sideList){
-        const id = `${row}-${s}-${p}`;
-        if (await Data.addRack({ id, row, side: s, pos: p, lat: null, lng: null, createdAt: Date.now() })) added++;
+      if (!rowSel || !countInp || !sideSel){
+        toast('Form elements are missing from the page.', 'err');
+        return;
       }
-    }
 
-    this.refreshAll();
-    toast(`${added} rack(s) created in Row ${row}`, 'ok');
+      const selVal   = rowSel.value;
+      const rawCount = parseInt(countInp.value, 10);
+      const count    = (isNaN(rawCount) || rawCount < 1) ? 1 : Math.min(rawCount, 200);
+      const sides    = sideSel.value || 'LR';
+
+      // Determine which row to create
+      let row;
+      if (selVal === '__new__' || !selVal){
+        const existing = Array.from(new Set(Data.racks.map(r => r.row).filter(Boolean)));
+        let maxIdx = -1;
+        existing.forEach(r => { const i = rowIndex(r); if (i > maxIdx) maxIdx = i; });
+        row = rowLabel(maxIdx + 1);
+      } else {
+        row = String(selVal).toUpperCase();
+      }
+
+      const sideList = sides === 'LR' ? ['L','R'] : [sides];
+      let added = 0;
+
+      for (let p = 1; p <= count; p++){
+        for (const s of sideList){
+          const id = `${row}-${s}-${p}`;
+          const ok = await Data.addRack({
+            id, row, side: s, pos: p,
+            lat: null, lng: null,
+            createdAt: Date.now()
+          });
+          if (ok) added++;
+        }
+      }
+
+      this.refreshAll();
+
+      if (added > 0){
+        toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row} ✅`, 'ok');
+      } else {
+        toast('No new racks were added (they may already exist).', 'info');
+      }
+    } catch (err){
+      console.error('[addRacks] Fatal error:', err);
+      toast('Failed to add racks: ' + (err && err.message ? err.message : 'Unknown error'), 'err');
+    }
   },
 
-  /* ---------- SCAN ---------- */
   renderScan(){
     const opts = Data.racks.map(r => `<option value="${escapeHtml(r.id)}">${Data.countIn(r.id)} bags</option>`).join('');
-    $('#rackList').innerHTML  = opts;
-    $('#rackList2').innerHTML = opts;
+    if ($('#rackList'))  $('#rackList').innerHTML  = opts;
+    if ($('#rackList2')) $('#rackList2').innerHTML = opts;
 
-    /* Company autocomplete from previous entries */
-    $('#companyList').innerHTML = Data.uniqueCompanies()
-      .map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
+    const cl = $('#companyList');
+    if (cl) cl.innerHTML = Data.uniqueCompanies().map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
 
     const rec = $('#scanRecent');
     const latest = Data.bags.slice(0, 10);
@@ -1010,8 +1078,9 @@ const UI = {
   },
 
   updateSigBar(){
-    const v = parseFloat($('#signalInput').value) || 0;
-    const fill = $('#sigFill');
+    const el = $('#signalInput'); if (!el) return;
+    const v = parseFloat(el.value) || 0;
+    const fill = $('#sigFill'); if (!fill) return;
     fill.style.width = Math.max(0, Math.min(100, v)) + '%';
     fill.classList.toggle('low', v < MIN_SIGNAL);
   },
@@ -1029,7 +1098,7 @@ const UI = {
   },
 
   setScanStatus(text, cls = ''){
-    const el = $('#scanStatus');
+    const el = $('#scanStatus'); if (!el) return;
     const dotCls = cls === 'err' ? 'off' : 'live';
     el.innerHTML = `<span class="dot ${dotCls}"></span> ${text}`;
   },
@@ -1061,7 +1130,6 @@ const UI = {
       toast(msg, 'err');
     };
 
-    /* ---- Validations ---- */
     if (!ufid) return fail('UFID tag is required.');
     if (!ufid.startsWith(UFID_PREFIX))
       return fail(`UFID must start with "${UFID_PREFIX}" (received: ${escapeHtml(ufid)})`);
@@ -1080,18 +1148,13 @@ const UI = {
     if (Data.bags.some(b => b.ufid === ufid))
       return fail(`UFID "${escapeHtml(ufid)}" is already registered (duplicate).`);
 
-    /* ---- Save ---- */
     const bag = {
-      ufid,
-      rackId,
+      ufid, rackId,
       row: rackId.split('-')[0],
       side: rackId.split('-')[1],
       signal: Number(signal),
-      invoice,
-      boxNo,
-      company,
-      kg: Number(kg),
-      bop,
+      invoice, boxNo, company,
+      kg: Number(kg), bop,
       scannedAt: Date.now()
     };
 
@@ -1102,7 +1165,6 @@ const UI = {
       return fail('Save error: ' + e.message);
     }
 
-    /* ---- Success ---- */
     flash();
     ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
     setTimeout(() => ufidEl.classList.remove('ok'), 1200);
@@ -1112,7 +1174,6 @@ const UI = {
     this.setScanStatus('Saved successfully', 'ok');
     toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
 
-    /* Reset form for next scan (keep rack + supply defaults for speed) */
     ufidEl.value = '';
     $('#boxInput').value = '';
     $('#kgInput').value  = '';
@@ -1125,13 +1186,11 @@ const UI = {
     this.renderScan();
   },
 
-  /* ---------- INVENTORY ---------- */
   renderInventory(){
     const q    = $('#searchInput').value.trim().toLowerCase();
     const rack = $('#filterRack').value;
     const bopF = $('#filterBOP').value;
 
-    /* Filter dropdowns */
     const fRack = $('#filterRack'), curR = fRack.value;
     fRack.innerHTML = `<option value="">All Racks</option>` +
       Data.racks.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml(r.id)} (${Data.countIn(r.id)})</option>`).join('');
@@ -1177,7 +1236,7 @@ const UI = {
         <td><span class="pill pill-purple">${escapeHtml(b.bop || '—')}</span></td>
         <td>${Number(b.signal).toFixed(0)}%</td>
         <td style="color:var(--muted);font-size:12px">${fmtTime(b.scannedAt)}</td>
-        <td><button class="btn btn-danger btn-sm" data-del="${escapeHtml(b.ufid)}">🗑</button></td>
+        <td><button type="button" class="btn btn-danger btn-sm" data-del="${escapeHtml(b.ufid)}">🗑</button></td>
       </tr>`).join('');
 
     $$('[data-del]', body).forEach(btn => {
@@ -1214,16 +1273,16 @@ const UI = {
   },
 
   refreshAll(){
-    this.renderDashboard();
-    this.renderRacks();
-    this.renderScan();
-    this.renderInventory();
-    MapView.renderMarkers();
+    try { this.renderDashboard(); } catch(e){ console.error('renderDashboard', e); }
+    try { this.renderRacks();     } catch(e){ console.error('renderRacks', e); }
+    try { this.renderScan();      } catch(e){ console.error('renderScan', e); }
+    try { this.renderInventory(); } catch(e){ console.error('renderInventory', e); }
+    try { MapView.renderMarkers(); } catch(e){ console.error('renderMarkers', e); }
   }
 };
 
 /* =====================================================================
-   5.  MAP VIEW (Leaflet + Geolocation)
+   MAP VIEW
    ===================================================================== */
 const MapView = {
   map: null,
@@ -1345,48 +1404,48 @@ const MapView = {
 };
 
 /* =====================================================================
-   6.  BOOTSTRAP
+   BOOTSTRAP
    ===================================================================== */
 async function boot(){
-  /* Live clock */
   setInterval(() => {
     const d = new Date(), p = n => String(n).padStart(2,'0');
-    $('#clock').textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    const c = $('#clock'); if (c) c.textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
   }, 1000);
 
   UI.initNav();
   await Data.init();
 
-  /* Events */
-  $('#addRacksBtn').addEventListener('click', () => UI.addRacks());
+  /* ---- Event bindings (with null checks so one failure can't kill the rest) ---- */
+  const bind = (sel, evt, fn) => {
+    const el = $(sel);
+    if (el) el.addEventListener(evt, fn);
+    else console.warn('[bind] element not found:', sel);
+  };
 
-  $('#saveBagBtn').addEventListener('click', () => UI.saveBag());
-  $('#ufidInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); }
-  });
-  $('#signalInput').addEventListener('input', () => UI.updateSigBar());
-  $('#kgInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); }
-  });
+  bind('#addRacksBtn', 'click', () => UI.addRacks());
+  bind('#saveBagBtn',  'click', () => UI.saveBag());
+  bind('#ufidInput',   'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
+  bind('#signalInput', 'input', () => UI.updateSigBar());
+  bind('#kgInput',     'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
 
-  $('#searchInput').addEventListener('input', () => UI.renderInventory());
-  $('#filterRack').addEventListener('change', () => UI.renderInventory());
-  $('#filterBOP').addEventListener('change', () => UI.renderInventory());
-  $('#exportBtn').addEventListener('click', () => UI.exportCSV());
+  bind('#searchInput', 'input',  () => UI.renderInventory());
+  bind('#filterRack',  'change', () => UI.renderInventory());
+  bind('#filterBOP',   'change', () => UI.renderInventory());
+  bind('#exportBtn',   'click',  () => UI.exportCSV());
 
-  $('#locateMeBtn').addEventListener('click', () => MapView.locateMe());
-  $('#placeModeBtn').addEventListener('click', () => MapView.startPlaceMode());
+  bind('#locateMeBtn', 'click', () => MapView.locateMe());
+  bind('#placeModeBtn','click', () => MapView.startPlaceMode());
 
   UI.refreshAll();
 
   toast(
     Data.mode === 'firebase'
       ? 'Firebase connected successfully ✅'
-      : 'Running in Local Storage mode — add your Firebase projectId to enable cloud sync',
+      : 'Running in Local Storage mode',
     Data.mode === 'firebase' ? 'ok' : 'info'
   );
 
-  setTimeout(() => $('#ufidInput').focus(), 600);
+  setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 600);
 }
 
 document.addEventListener('DOMContentLoaded', boot);
