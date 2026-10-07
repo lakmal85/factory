@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TeaStore Pro | Rack & UFID Management</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --blue:#2563eb; --blue-2:#3b82f6; --blue-soft:#eff6ff; --blue-line:#bfdbfe;
+  --green:#10b981; --green-2:#34d399; --green-soft:#ecfdf5;
+  --ink:#0f172a; --muted:#64748b; --line:#e6ecf3;
+  --bg:#ffffff; --soft:#f7fafc; --radius:16px;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow:0 10px 30px rgba(37,99,235,.08);
+  --shadow-lg:0 20px 50px rgba(37,99,235,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:20px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+.sidebar{
+  background:linear-gradient(180deg,#ffffff 0%,#f6fbff 60%,#f2fdf9 100%);
+  border-right:1px solid var(--line); padding:22px 16px;
+  display:flex;flex-direction:column;gap:20px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 6px 14px;border-bottom:1px solid var(--line)}
+.brand-logo{
+  width:44px;height:44px;border-radius:14px;flex:0 0 44px;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  display:grid;place-items:center;color:#fff;font-size:20px;
+  box-shadow:0 8px 20px rgba(37,99,235,.3);
+  animation:floaty 4s ease-in-out infinite;
+}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.brand-txt h2{font-size:15px;font-weight:800;letter-spacing:-.2px;line-height:1.2}
+.brand-txt span{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+
+.nav{display:flex;flex-direction:column;gap:6px;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:11px 14px;border:0;background:transparent;border-radius:12px;
+  font-size:14px;font-weight:600;color:#475569;cursor:pointer;
+  transition:all .22s cubic-bezier(.4,0,.2,1);text-align:left;font-family:inherit;
+}
+.nav-item svg{width:19px;height:19px;flex:0 0 19px;stroke-width:2}
+.nav-item:hover{background:var(--blue-soft);color:var(--blue);transform:translateX(4px)}
+.nav-item.active{
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  color:#fff;box-shadow:0 10px 22px rgba(37,99,235,.28);
+}
+.nav-item.active:hover{transform:translateX(0)}
+
+.conn{
+  border-top:1px solid var(--line);padding-top:14px;
+  display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600;color:var(--muted);
+}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--green);position:relative}
+.dot.live::after{
+  content:'';position:absolute;inset:0;border-radius:50%;background:var(--green);
+  animation:pulse 1.8s ease-out infinite;
+}
+.dot.off{background:#f59e0b}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.7)}70%{box-shadow:0 0 0 11px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+
+.main{padding:26px 32px 60px;max-width:1600px;width:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.topbar h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.topbar p{font-size:13px;color:var(--muted);margin-top:3px;font-weight:500}
+.clock{
+  font-size:13px;font-weight:700;color:var(--blue);background:var(--blue-soft);
+  padding:9px 16px;border-radius:12px;font-variant-numeric:tabular-nums;
+  border:1px solid var(--blue-line);
+}
+
+/* ---------- Views ---------- */
+.view{display:none}
+.view.active{display:block;animation:fadeUp .38s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- Cards ---------- */
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow-sm);transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.card:hover{box-shadow:var(--shadow);border-color:#dbe7f5}
+.card-title{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.card-title .bar{width:4px;height:16px;border-radius:4px;background:linear-gradient(180deg,var(--blue),var(--green))}
+
+/* ---------- Stat cards ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:20px}
+.stat{
+  position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px 20px;transition:all .28s cubic-bezier(.4,0,.2,1);
+}
+.stat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  transform:scaleX(0);transform-origin:left;transition:transform .35s ease;
+}
+.stat:hover::before{transform:scaleX(1)}
+.stat:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--blue-line)}
+.stat-ico{
+  width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--blue-soft),var(--green-soft));
+  color:var(--blue);margin-bottom:12px;
+}
+.stat-ico svg{width:21px;height:21px;stroke-width:2}
+.stat-val{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.stat-lbl{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.6px}
+
+/* ---------- Grid helpers ---------- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.row-split{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+@media(max-width:1050px){.row-split{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.field label .req{color:#ef4444;margin-left:2px}
+input,select{
+  font-family:inherit;font-size:14px;font-weight:600;padding:12px 14px;
+  border:1.6px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);
+  outline:none;transition:all .2s;width:100%;
+}
+input::placeholder{color:#b6c2d1;font-weight:500}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.11)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:12px 20px;border-radius:12px;border:0;font-weight:700;font-size:14px;
+  cursor:pointer;font-family:inherit;transition:all .22s cubic-bezier(.4,0,.2,1);white-space:nowrap;
+}
+.btn svg{width:17px;height:17px;stroke-width:2.2}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.26)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(37,99,235,.36)}
+.btn-primary:active{transform:translateY(0)}
+.btn-ghost{background:var(--blue-soft);color:var(--blue)}
+.btn-ghost:hover{background:#dbeafe;transform:translateY(-2px)}
+.btn-green{background:var(--green-soft);color:#047857}
+.btn-green:hover{background:#d1fae5;transform:translateY(-2px)}
+.btn-danger{background:#fef2f2;color:#dc2626}
+.btn-danger:hover{background:#fee2e2}
+.btn-block{width:100%}
+.btn-sm{padding:7px 13px;font-size:12.5px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
+
+/* ---------- Racks ---------- */
+.row-block{margin-bottom:22px}
+.row-head{
+  display:flex;align-items:center;gap:12px;margin-bottom:12px;
+  padding-bottom:10px;border-bottom:2px dashed var(--line);
+}
+.row-chip{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;
+  font-weight:800;font-size:16px;box-shadow:0 8px 18px rgba(37,99,235,.25);
+}
+.row-meta{font-size:13px;color:var(--muted);font-weight:600}
+.rack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+.rack-card{
+  border:1.6px solid var(--line);border-radius:14px;padding:13px 14px;background:#fff;
+  transition:all .25s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;cursor:pointer;
+}
+.rack-card::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:linear-gradient(135deg,rgba(37,99,235,.05),rgba(16,185,129,.05));
+  opacity:0;transition:opacity .25s;
+}
+.rack-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--blue-line)}
+.rack-card:hover::after{opacity:1}
+.rack-id{font-size:13.5px;font-weight:800;letter-spacing:.5px;color:var(--ink);position:relative;z-index:1}
+.rack-cnt{font-size:27px;font-weight:800;letter-spacing:-1px;margin-top:4px;position:relative;z-index:1;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.rack-sub{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;position:relative;z-index:1}
+.rack-side{
+  position:absolute;top:11px;right:11px;font-size:9.5px;font-weight:800;
+  padding:3px 8px;border-radius:8px;letter-spacing:.6px;z-index:1;
+}
+.side-L{background:var(--blue-soft);color:var(--blue)}
+.side-R{background:var(--green-soft);color:#047857}
+
+/* ---------- Scan ---------- */
+.scan-card{border:2px solid transparent;background:
+  linear-gradient(#fff,#fff) padding-box,
+  linear-gradient(135deg,var(--blue),var(--green)) border-box;
+  box-shadow:0 14px 40px rgba(37,99,235,.12);
+}
+.scan-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.scan-badge{
+  font-size:11px;font-weight:800;letter-spacing:1.2px;padding:7px 14px;border-radius:20px;
+  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;
+  box-shadow:0 6px 16px rgba(37,99,235,.3);
+}
+.scan-status{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:8px}
+.scan-input{
+  font-size:22px;font-weight:800;letter-spacing:3px;text-align:center;padding:18px;
+  font-family:'SF Mono',Menlo,Consolas,monospace;text-transform:uppercase;
+}
+.scan-input.ok{border-color:var(--green);box-shadow:0 0 0 4px rgba(16,185,129,.14)}
+.scan-input.err{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.13);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.sig-bar{height:6px;border-radius:6px;background:#eef2f7;overflow:hidden;margin-top:2px}
+.sig-fill{height:100%;width:98%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .3s ease, background .3s}
+.sig-fill.low{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+
+.section-sep{
+  display:flex;align-items:center;gap:12px;margin:22px 0 14px;
+  font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;
+}
+.section-sep::before,.section-sep::after{content:'';flex:1;height:1px;background:var(--line)}
+.section-sep::before{max-width:24px}
+
+.hint{
+  font-size:12px;font-weight:600;padding:11px 14px;border-radius:11px;margin-top:12px;
+  display:flex;align-items:flex-start;gap:9px;line-height:1.55;
+}
+.hint.info{background:var(--blue-soft);color:#1e40af}
+.hint.ok{background:var(--green-soft);color:#047857}
+.hint.warn{background:#fffbeb;color:#b45309}
+.hint.err{background:#fef2f2;color:#b91c1c}
+
+/* recent list */
+.mini-list{display:flex;flex-direction:column;gap:9px;max-height:520px;overflow-y:auto;padding-right:4px}
+.mini{
+  display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;
+  background:var(--soft);border:1px solid var(--line);transition:all .2s;
+}
+.mini:hover{background:#fff;border-color:var(--blue-line);transform:translateX(4px)}
+.mini-ico{
+  width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:0 0 36px;
+  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;font-size:14px;font-weight:800;
+}
+.mini-id{font-size:13px;font-weight:800;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
+.mini-sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+.mini-badge{
+  margin-left:auto;font-size:11px;font-weight:800;padding:5px 10px;border-radius:9px;
+  background:var(--green-soft);color:#047857;
+}
+
+/* ---------- Table ---------- */
+.table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1100px}
+thead th{
+  background:linear-gradient(180deg,#f8fbff,#f2f8ff);text-align:left;
+  padding:13px 14px;font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.7px;border-bottom:1.6px solid var(--line);white-space:nowrap;
+}
+tbody td{padding:12px 14px;border-bottom:1px solid #f1f5f9;font-weight:600}
+tbody tr{transition:background .18s}
+tbody tr:hover{background:var(--blue-soft)}
+tbody tr:last-child td{border-bottom:0}
+.mono{font-family:'SF Mono',Menlo,Consolas,monospace;font-weight:800;letter-spacing:.5px}
+
+.pill{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;
+  font-size:11.5px;font-weight:800;white-space:nowrap;
+}
+.pill-blue{background:var(--blue-soft);color:var(--blue)}
+.pill-green{background:var(--green-soft);color:#047857}
+.pill-amber{background:#fffbeb;color:#b45309}
+.pill-purple{background:#f5f3ff;color:#7c3aed}
+
+/* ---------- Map ---------- */
+#map{height:calc(100vh - 250px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);z-index:1}
+.leaflet-container{font-family:inherit}
+.rm-dot{
+  width:20px;height:20px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  border:3px solid #fff;box-shadow:0 3px 10px rgba(15,23,42,.35);
+}
+.user-dot{
+  width:18px;height:18px;border-radius:50%;background:#2563eb;border:3px solid #fff;
+  box-shadow:0 0 0 4px rgba(37,99,235,.25);
+}
+.map-fallback{padding:40px;text-align:center;color:var(--muted);font-weight:600}
+
+/* ---------- Toast ---------- */
+#toasts{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:11px;pointer-events:none}
+.toast{
+  min-width:280px;max-width:400px;padding:14px 18px;border-radius:14px;background:#fff;
+  box-shadow:0 18px 44px rgba(15,23,42,.18);border-left:4px solid var(--green);
+  display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:700;
+  animation:slideIn .35s cubic-bezier(.4,0,.2,1);pointer-events:auto;
+}
+.toast.err{border-left-color:#ef4444}
+.toast.info{border-left-color:var(--blue)}
+.toast.out{animation:slideOut .3s forwards}
+@keyframes slideIn{from{opacity:0;transform:translateX(80px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes slideOut{to{opacity:0;transform:translateX(80px) scale(.95)}}
+.toast-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:0 0 34px;font-size:16px}
+.toast.ok .toast-ico{background:var(--green-soft)}
+.toast.err .toast-ico{background:#fef2f2}
+.toast.info .toast-ico{background:var(--blue-soft)}
+
+#flash{
+  position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0;
+  background:radial-gradient(circle at 50% 45%,rgba(16,185,129,.30),transparent 62%);
+}
+#flash.go{animation:flashAnim .55s ease-out}
+@keyframes flashAnim{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-ico{font-size:44px;margin-bottom:12px;opacity:.55}
+.empty h3{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.empty p{font-size:13px;font-weight:600;margin-bottom:16px}
+
+.toolbar{display:flex;gap:11px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.toolbar input,.toolbar select{width:auto;min-width:170px;padding:10px 13px;font-size:13.5px}
+.spacer{flex:1}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;flex-direction:row;overflow-x:auto;gap:12px;padding:14px;align-items:center}
+  .brand{border:0;padding:0;flex:0 0 auto}
+  .brand-txt{display:none}
+  .nav{flex-direction:row;gap:8px;flex:0 0 auto}
+  .nav-item{white-space:nowrap;padding:9px 14px}
+  .nav-item span{display:none}
+  .nav-item.active span,.nav-item:hover span{display:inline}
+  .conn{display:none}
+  .main{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🍃</div>
+      <div class="brand-txt">
+        <h2>TeaStore Pro</h2>
+        <span>RACK &amp; UFID SYSTEM</span>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="racks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        <span>Racks</span>
+      </button>
+      <button class="nav-item" data-view="scan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg>
+        <span>UFID Scanner</span>
+      </button>
+      <button class="nav-item" data-view="map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Live Map</span>
+      </button>
+      <button class="nav-item" data-view="inventory">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"/><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M10 12h4"/></svg>
+        <span>Inventory</span>
+      </button>
+    </nav>
+
+    <div class="conn">
+      <span class="dot live" id="connDot"></span>
+      <span id="connTxt">Connecting...</span>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSub">Warehouse overview — racks, UFID tags &amp; inventory</p>
+      </div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="view active" id="view-dashboard">
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 7v10l8 4 8-4V7"/></svg></div>
+          <div class="stat-val" id="stBags">0</div>
+          <div class="stat-lbl">Total Bags</div>
+        </div>
+        <div class="stat">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div>
+          <div class="stat-val" id="stRacks">0</div>
+          <div class="stat-lbl">Total Racks</div>
+        </div>
+        <div class="stat">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div class="stat-val" id="stKG">0</div>
+          <div class="stat-lbl">Total Weight (KG)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div class="stat-val" id="stToday">0</div>
+          <div class="stat-lbl">Scanned Today</div>
+        </div>
+      </div>
+
+      <div class="row-split">
+        <div class="card">
+          <div class="card-title"><span class="bar"></span>Bag Distribution by Row</div>
+          <div id="rowChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="bar"></span>Latest Scans</div>
+          <div class="mini-list" id="recentList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RACKS ===== -->
+    <section class="view" id="view-racks">
+      <div class="row-split">
+        <div>
+          <div class="card" style="margin-bottom:18px">
+            <div class="card-title"><span class="bar"></span>Create Racks</div>
+            <div class="grid-3">
+              <div class="field">
+                <label>Row</label>
+                <select id="rowSelect"></select>
+              </div>
+              <div class="field">
+                <label>Number of Racks</label>
+                <input type="number" id="rackCount" value="5" min="1" max="200" />
+              </div>
+              <div class="field">
+                <label>Sides</label>
+                <select id="sideSelect">
+                  <option value="LR">Both (L + R)</option>
+                  <option value="L">Right side only (L)</option>
+                  <option value="R">Left side only (R)</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="addRacksBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add Racks
+            </button>
+            <div class="hint info" style="margin-top:14px">
+              <span>ℹ️</span>
+              <span>Rack ID format: <b>A-L-1</b> (right) / <b>A-R-1</b> (left). New rows are auto-assigned A, B, C, D, E&hellip;</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span class="bar"></span>Rack Layout</div>
+            <div id="rackTree"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="bar"></span>Rack Summary</div>
+          <div class="mini-list" id="rackSummary"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SCAN ===== -->
+    <section class="view" id="view-scan">
+      <div class="row-split">
+        <div class="card scan-card">
+          <div class="scan-head">
+            <div class="scan-badge">UFID 6M SCANNER</div>
+            <div class="scan-status" id="scanStatus">
+              <span class="dot live"></span> Ready to scan
+            </div>
+          </div>
+
+          <div class="field">
+            <label>UFID Tag <span class="req">*</span></label>
+            <input id="ufidInput" class="scan-input" placeholder="6M••••••" autocomplete="off" spellcheck="false" />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Signal Strength (%) <span class="req">*</span></label>
+              <input type="number" id="signalInput" value="98" min="0" max="100" step="0.1" />
+              <div class="sig-bar"><div class="sig-fill" id="sigFill"></div></div>
+            </div>
+            <div class="field">
+              <label>Rack ID <span class="req">*</span></label>
+              <input id="rackInput" list="rackList" placeholder="A-L-1" autocomplete="off" />
+              <datalist id="rackList"></datalist>
+            </div>
+          </div>
+
+          <div class="section-sep">Supply Details</div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Supply Name / Invoice No <span class="req">*</span></label>
+              <input id="invoiceInput" placeholder="e.g. INV-2024-0142" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label>Box No <span class="req">*</span></label>
+              <input id="boxInput" placeholder="e.g. BX-014" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label>Company <span class="req">*</span></label>
+              <input id="companyInput" list="companyList" placeholder="e.g. Ceylon Tea Co." autocomplete="off" />
+              <datalist id="companyList"></datalist>
+            </div>
+            <div class="field">
+              <label>Weight (KG) <span class="req">*</span></label>
+              <input type="number" id="kgInput" placeholder="e.g. 25.5" step="0.01" min="0" />
+            </div>
+            <div class="field">
+              <label>BOP Category <span class="req">*</span></label>
+              <select id="bopInput">
+                <option value="">Select grade…</option>
+                <option>BOP</option>
+                <option>BOPF</option>
+                <option>BOP1</option>
+                <option>BP1</option>
+                <option>PF</option>
+                <option>PF1</option>
+                <option>PD</option>
+                <option>PD1</option>
+                <option>Dust</option>
+                <option>Dust1</option>
+                <option>FBOP</option>
+                <option>FBOPF</option>
+                <option>OP</option>
+                <option>OPA</option>
+                <option>Fannings</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-block" id="saveBagBtn" style="margin-top:10px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+            Save Bag to Rack
+          </button>
+
+          <div class="hint info" id="scanHint">
+            <span>💡</span>
+            <span>Scan the UFID tag with the 6M scanner and press <b>Enter</b>. Signal strength must be at least <b>98%</b>. Duplicate UFIDs are automatically rejected.</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="bar"></span>Recent Scans (10)</div>
+          <div class="mini-list" id="scanRecent"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MAP ===== -->
+    <section class="view" id="view-map">
+      <div class="card" style="margin-bottom:16px">
+        <div class="toolbar" style="margin-bottom:0">
+          <div class="field" style="margin:0;min-width:210px">
+            <label>Select Rack</label>
+            <input id="mapRackInput" list="rackList2" placeholder="A-L-1" autocomplete="off" />
+            <datalist id="rackList2"></datalist>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="locateMeBtn" style="margin-top:18px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+            My Location
+          </button>
+          <button class="btn btn-green btn-sm" id="placeModeBtn" style="margin-top:18px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Place Location
+          </button>
+          <div class="spacer"></div>
+          <div class="hint info" style="margin:0" id="mapHint">
+            <span>📍</span><span>Select a rack, click <b>Place Location</b>, then click on the map to save GPS coordinates.</span>
+          </div>
+        </div>
+      </div>
+      <div id="map"></div>
+    </section>
+
+    <!-- ===== INVENTORY ===== -->
+    <section class="view" id="view-inventory">
+      <div class="card">
+        <div class="card-title"><span class="bar"></span>Inventory Register</div>
+        <div class="toolbar">
+          <input id="searchInput" placeholder="🔍 Search UFID, invoice, box, company…" />
+          <select id="filterRack"><option value="">All Racks</option></select>
+          <select id="filterBOP"><option value="">All BOP Grades</option></select>
+          <div class="spacer"></div>
+          <span class="pill pill-blue" id="invCount">0 bags</span>
+          <span class="pill pill-green" id="invKG">0 KG</span>
+          <button class="btn btn-ghost btn-sm" id="exportBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+            Export CSV
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>UFID</th>
+                <th>Rack</th>
+                <th>Supply / Invoice</th>
+                <th>Box No</th>
+                <th>Company</th>
+                <th>KG</th>
+                <th>BOP Category</th>
+                <th>Signal</th>
+                <th>Scanned At</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="invBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toasts"></div>
+<div id="flash"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* =====================================================================
+   1.  FIREBASE CONFIGURATION
+   ---------------------------------------------------------------------
+   ⚠️  Only the API key has been provided. For Firebase to work you MUST
+       also replace the placeholder values below with your actual project
+       settings (Firebase Console → Project Settings → Web App).
+       Until then, the app automatically falls back to LocalStorage.
+   ===================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyABuZWbNXGJ359mbctDsX-SSxwkUd3v1KY",
+  authDomain: "student-management-syste-d39a3.firebaseapp.com",
+  databaseURL: "https://student-management-syste-d39a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "student-management-syste-d39a3",
+  storageBucket: "student-management-syste-d39a3.firebasestorage.app",
+  messagingSenderId: "36925529487",
+  appId: "1:36925529487:web:385e1af7ba174f8440fffa"
+};
+
+const MIN_SIGNAL   = 98;      // Minimum accepted signal strength (%)
+const UFID_PREFIX  = "6M";    // UFID must start with this prefix
+const UFID_MIN_LEN = 6;       // Minimum UFID character length
+
+/* =====================================================================
+   2.  UTILITIES
+   ===================================================================== */
+const $  = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+
+function rowLabel(i){
+  let s = '', n = i + 1;
+  while (n > 0){ const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+function rowIndex(label){
+  let n = 0;
+  for (const ch of label.toUpperCase()) n = n * 26 + (ch.charCodeAt(0) - 64);
+  return n - 1;
+}
+function fmtTime(ts){
+  const d = new Date(ts), p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function isToday(ts){
+  const d = new Date(ts), n = new Date();
+  return d.getFullYear() === n.getFullYear() && d.getMonth() === n.getMonth() && d.getDate() === n.getDate();
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toast(msg, type = 'ok'){
+  const box = $('#toasts');
+  const el  = document.createElement('div');
+  el.className = `toast ${type}`;
+  const ico = type === 'ok' ? '✅' : type === 'err' ? '⚠️' : 'ℹ️';
+  el.innerHTML = `<div class="toast-ico">${ico}</div><div>${msg}</div>`;
+  box.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3400);
+}
+function flash(){
+  const f = $('#flash');
+  f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+}
+
+/* =====================================================================
+   3.  DATA LAYER (Firebase Firestore → LocalStorage fallback)
+   ===================================================================== */
+const Data = {
+  mode: 'local',
+  db: null,
+  racks: [],
+  bags: [],
+
+  async init(){
+    const cfgOk = FIREBASE_CONFIG.apiKey &&
+                  !FIREBASE_CONFIG.apiKey.startsWith('YOUR_') &&
+                  FIREBASE_CONFIG.projectId &&
+                  !FIREBASE_CONFIG.projectId.startsWith('YOUR_');
+
+    if (cfgOk && typeof firebase !== 'undefined'){
+      try{
+        if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        this.db = firebase.firestore();
+        await this.db.collection('racks').limit(1).get();
+        this.mode = 'firebase';
+      }catch(e){
+        console.warn('[Firebase] Connection failed — falling back to LocalStorage:', e.message);
+        this.mode = 'local';
+      }
+    }
+    await this.loadAll();
+    UI.updateConn();
+  },
+
+  async loadAll(){
+    if (this.mode === 'firebase'){
+      const [r, b] = await Promise.all([
+        this.db.collection('racks').get(),
+        this.db.collection('bags').get()
+      ]);
+      this.racks = r.docs.map(d => d.data());
+      this.bags  = b.docs.map(d => d.data());
+    } else {
+      this.racks = JSON.parse(localStorage.getItem('teastore_racks_v2') || '[]');
+      this.bags  = JSON.parse(localStorage.getItem('teastore_bags_v2')  || '[]');
+    }
+    this.racks.sort((a,b) => a.row.localeCompare(b.row) || a.side.localeCompare(b.side) || a.pos - b.pos);
+    this.bags.sort((a,b) => b.scannedAt - a.scannedAt);
+  },
+
+  _persist(){
+    if (this.mode === 'local'){
+      localStorage.setItem('teastore_racks_v2', JSON.stringify(this.racks));
+      localStorage.setItem('teastore_bags_v2',  JSON.stringify(this.bags));
+    }
+  },
+
+  /* ---- Racks ---- */
+  async addRack(rack){
+    if (this.racks.some(r => r.id === rack.id)) return false;
+    if (this.mode === 'firebase') await this.db.collection('racks').doc(rack.id).set(rack);
+    this.racks.push(rack);
+    this.racks.sort((a,b) => a.row.localeCompare(b.row) || a.side.localeCompare(b.side) || a.pos - b.pos);
+    this._persist();
+    return true;
+  },
+
+  async updateRack(id, patch){
+    const r = this.racks.find(x => x.id === id);
+    if (!r) return;
+    Object.assign(r, patch);
+    if (this.mode === 'firebase') await this.db.collection('racks').doc(id).set(r);
+    this._persist();
+  },
+
+  /* ---- Bags ---- */
+  async addBag(bag){
+    if (this.bags.some(b => b.ufid === bag.ufid)) throw new Error('DUPLICATE');
+    if (this.mode === 'firebase'){
+      const ref  = this.db.collection('bags').doc(bag.ufid);
+      const snap = await ref.get();
+      if (snap.exists) throw new Error('DUPLICATE');
+      await ref.set(bag);
+    }
+    this.bags.unshift(bag);
+    this._persist();
+  },
+
+  async deleteBag(ufid){
+    if (this.mode === 'firebase') await this.db.collection('bags').doc(ufid).delete();
+    this.bags = this.bags.filter(b => b.ufid !== ufid);
+    this._persist();
+  },
+
+  countIn(rackId){ return this.bags.filter(b => b.rackId === rackId).length; },
+  totalKG(){ return this.bags.reduce((s, b) => s + (parseFloat(b.kg) || 0), 0); },
+  uniqueCompanies(){ return Array.from(new Set(this.bags.map(b => b.company).filter(Boolean))).sort(); }
+};
+
+/* =====================================================================
+   4.  UI CONTROLLER
+   ===================================================================== */
+const UI = {
+  currentView: 'dashboard',
+
+  initNav(){
+    $$('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => this.go(btn.dataset.view));
+    });
+  },
+
+  go(view){
+    this.currentView = view;
+    $$('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    $$('.view').forEach(v => v.classList.toggle('active', v.id === `view-${view}`));
+
+    const titles = {
+      dashboard: ['Dashboard',              'Warehouse overview — racks, UFID tags & inventory'],
+      racks:     ['Rack Management',        'Configure rows, sides and rack numbering'],
+      scan:      ['UFID Scanner',           'Register tea bags into racks'],
+      map:       ['Live Location Map',      'GPS positions of racks and current device location'],
+      inventory: ['Inventory Register',     'Complete record of all scanned tea bags']
+    };
+    $('#pageTitle').textContent = titles[view][0];
+    $('#pageSub').textContent   = titles[view][1];
+
+    if (view === 'map'){ MapView.ensure(); setTimeout(() => MapView.map && MapView.map.invalidateSize(), 120); }
+    if (view === 'scan') setTimeout(() => $('#ufidInput').focus(), 200);
+    if (view === 'dashboard') this.renderDashboard();
+  },
+
+  updateConn(){
+    const dot = $('#connDot'), txt = $('#connTxt');
+    if (Data.mode === 'firebase'){
+      dot.className = 'dot live'; txt.textContent = 'Firebase Connected';
+    } else {
+      dot.className = 'dot off';  txt.textContent = 'Local Storage (Offline)';
+    }
+  },
+
+  /* ---------- DASHBOARD ---------- */
+  renderDashboard(){
+    const rows = new Set(Data.racks.map(r => r.row));
+    $('#stBags').textContent  = Data.bags.length;
+    $('#stRacks').textContent = Data.racks.length;
+    $('#stKG').textContent    = Data.totalKG().toFixed(1);
+    $('#stToday').textContent = Data.bags.filter(b => isToday(b.scannedAt)).length;
+
+    /* Row chart */
+    const chart = $('#rowChart');
+    if (!Data.racks.length){
+      chart.innerHTML = `<div class="empty"><div class="empty-ico">📦</div><h3>No racks yet</h3><p>Add your first row from the <b>Racks</b> section</p></div>`;
+    } else {
+      const byRow = {};
+      Data.bags.forEach(b => {
+        const r = (b.rackId || '').split('-')[0];
+        if (r) byRow[r] = (byRow[r] || 0) + 1;
+      });
+      const max = Math.max(1, ...Object.values(byRow));
+      const sortedRows = Array.from(rows).sort((a,b) => rowIndex(a) - rowIndex(b));
+      chart.innerHTML = sortedRows.map(r => {
+        const c = byRow[r] || 0;
+        const w = Math.round((c / max) * 100);
+        return `
+          <div style="margin-bottom:15px">
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:800;margin-bottom:6px">
+              <span>Row ${escapeHtml(r)}</span>
+              <span style="color:var(--blue)">${c} bags</span>
+            </div>
+            <div style="height:9px;border-radius:9px;background:#eef2f7;overflow:hidden">
+              <div style="height:100%;width:${w}%;border-radius:9px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .6s cubic-bezier(.4,0,.2,1)"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    const rec = $('#recentList');
+    const latest = Data.bags.slice(0, 12);
+    rec.innerHTML = latest.length
+      ? latest.map(b => UI.miniRow(b)).join('')
+      : `<div class="empty" style="padding:26px"><div class="empty-ico">🍃</div><p>No scans recorded yet</p></div>`;
+  },
+
+  miniRow(b){
+    return `
+      <div class="mini">
+        <div class="mini-ico">${escapeHtml(b.bop || 'T')}</div>
+        <div>
+          <div class="mini-id">${escapeHtml(b.ufid)}</div>
+          <div class="mini-sub">${escapeHtml(b.rackId)} • ${escapeHtml(b.company || '—')} • ${b.kg || 0} KG • ${fmtTime(b.scannedAt)}</div>
+        </div>
+        <div class="mini-badge">${Number(b.signal).toFixed(0)}%</div>
+      </div>`;
+  },
+
+  /* ---------- RACKS ---------- */
+  renderRacks(){
+    const rows = Array.from(new Set(Data.racks.map(r => r.row))).sort((a,b) => rowIndex(a) - rowIndex(b));
+    const nextLabel = rowLabel(rows.length ? Math.max(...rows.map(rowIndex)) + 1 : 0);
+    const sel = $('#rowSelect');
+    const prev = sel.value;
+    sel.innerHTML =
+      `<option value="__new__">➕ New row — ${nextLabel}</option>` +
+      rows.map(r => `<option value="${escapeHtml(r)}">Row ${escapeHtml(r)}</option>`).join('');
+    sel.value = (prev && Array.from(sel.options).some(o => o.value === prev)) ? prev : '__new__';
+
+    const tree = $('#rackTree');
+    if (!Data.racks.length){
+      tree.innerHTML = `<div class="empty"><div class="empty-ico">🏗️</div><h3>No racks yet</h3><p>Use the form above to create your first row</p></div>`;
+    } else {
+      const grouped = {};
+      Data.racks.forEach(r => { (grouped[r.row] = grouped[r.row] || []).push(r); });
+      const keys = Object.keys(grouped).sort((a,b) => rowIndex(a) - rowIndex(b));
+
+      tree.innerHTML = keys.map(k => {
+        const list = grouped[k].sort((a,b) => a.side.localeCompare(b.side) || a.pos - b.pos);
+        const total = list.reduce((s, r) => s + Data.countIn(r.id), 0);
+        return `
+          <div class="row-block">
+            <div class="row-head">
+              <div class="row-chip">${escapeHtml(k)}</div>
+              <div>
+                <div style="font-size:14px;font-weight:800">Row ${escapeHtml(k)}</div>
+                <div class="row-meta">${list.length} racks • ${total} bags</div>
+              </div>
+            </div>
+            <div class="rack-grid">
+              ${list.map(r => `
+                <div class="rack-card" data-rack="${escapeHtml(r.id)}" title="Click to scan into this rack">
+                  <span class="rack-side side-${r.side}">${r.side}</span>
+                  <div class="rack-id">${escapeHtml(r.id)}</div>
+                  <div class="rack-cnt">${Data.countIn(r.id)}</div>
+                  <div class="rack-sub">Tea Bags</div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }).join('');
+
+      $$('.rack-card', tree).forEach(c => {
+        c.addEventListener('click', () => {
+          $('#rackInput').value = c.dataset.rack;
+          UI.go('scan');
+          setTimeout(() => $('#ufidInput').focus(), 250);
+        });
+      });
+    }
+
+    const sum = $('#rackSummary');
+    const sorted = [...Data.racks].sort((a,b) => Data.countIn(b.id) - Data.countIn(a.id));
+    sum.innerHTML = sorted.length
+      ? sorted.slice(0, 40).map(r => `
+          <div class="mini">
+            <div class="mini-ico" style="background:linear-gradient(135deg,${r.side==='L'?'#2563eb,#3b82f6':'#10b981,#34d399'})">${r.side}</div>
+            <div>
+              <div class="mini-id">${escapeHtml(r.id)}</div>
+              <div class="mini-sub">${r.lat ? 'GPS ✓' : 'GPS ✗'}</div>
+            </div>
+            <div class="mini-badge">${Data.countIn(r.id)}</div>
+          </div>`).join('')
+      : `<div class="empty" style="padding:26px"><p>No data</p></div>`;
+  },
+
+  async addRacks(){
+    const selVal = $('#rowSelect').value;
+    const count  = Math.max(1, Math.min(200, parseInt($('#rackCount').value) || 1));
+    const sides  = $('#sideSelect').value;
+
+    const rows = Array.from(new Set(Data.racks.map(r => r.row)));
+    const row = selVal === '__new__'
+      ? rowLabel(rows.length ? Math.max(...rows.map(rowIndex)) + 1 : 0)
+      : selVal;
+
+    const sideList = sides === 'LR' ? ['L','R'] : [sides];
+    let added = 0;
+
+    for (let p = 1; p <= count; p++){
+      for (const s of sideList){
+        const id = `${row}-${s}-${p}`;
+        if (await Data.addRack({ id, row, side: s, pos: p, lat: null, lng: null, createdAt: Date.now() })) added++;
+      }
+    }
+
+    this.refreshAll();
+    toast(`${added} rack(s) created in Row ${row}`, 'ok');
+  },
+
+  /* ---------- SCAN ---------- */
+  renderScan(){
+    const opts = Data.racks.map(r => `<option value="${escapeHtml(r.id)}">${Data.countIn(r.id)} bags</option>`).join('');
+    $('#rackList').innerHTML  = opts;
+    $('#rackList2').innerHTML = opts;
+
+    /* Company autocomplete from previous entries */
+    $('#companyList').innerHTML = Data.uniqueCompanies()
+      .map(c => `<option value="${escapeHtml(c)}"></option>`).join('');
+
+    const rec = $('#scanRecent');
+    const latest = Data.bags.slice(0, 10);
+    rec.innerHTML = latest.length
+      ? latest.map(b => this.miniRow(b)).join('')
+      : `<div class="empty" style="padding:26px"><div class="empty-ico">📡</div><p>No scans yet</p></div>`;
+
+    this.updateSigBar();
+  },
+
+  updateSigBar(){
+    const v = parseFloat($('#signalInput').value) || 0;
+    const fill = $('#sigFill');
+    fill.style.width = Math.max(0, Math.min(100, v)) + '%';
+    fill.classList.toggle('low', v < MIN_SIGNAL);
+  },
+
+  parseScan(raw){
+    const t = String(raw).trim().toUpperCase();
+    if (!t) return { ufid: '', sig: null };
+    const parts = t.split(/[|,;\s]+/).filter(Boolean);
+    let sig = null;
+    if (parts[1] !== undefined){
+      const n = parseFloat(parts[1]);
+      if (!isNaN(n)) sig = n;
+    }
+    return { ufid: parts[0] || '', sig };
+  },
+
+  setScanStatus(text, cls = ''){
+    const el = $('#scanStatus');
+    const dotCls = cls === 'err' ? 'off' : 'live';
+    el.innerHTML = `<span class="dot ${dotCls}"></span> ${text}`;
+  },
+
+  async saveBag(){
+    const parsed = this.parseScan($('#ufidInput').value);
+    const ufid   = parsed.ufid;
+
+    let signal = parsed.sig;
+    if (signal === null) signal = parseFloat($('#signalInput').value);
+    if (isNaN(signal)) signal = 0;
+
+    const rackId  = $('#rackInput').value.trim().toUpperCase();
+    const invoice = $('#invoiceInput').value.trim();
+    const boxNo   = $('#boxInput').value.trim();
+    const company = $('#companyInput').value.trim();
+    const kg      = parseFloat($('#kgInput').value);
+    const bop     = $('#bopInput').value.trim();
+
+    const ufidEl = $('#ufidInput');
+    const hint   = $('#scanHint');
+
+    const fail = (msg) => {
+      ufidEl.classList.remove('ok'); ufidEl.classList.add('err');
+      setTimeout(() => ufidEl.classList.remove('err'), 500);
+      hint.className = 'hint err';
+      hint.innerHTML = `<span>⛔</span><span>${msg}</span>`;
+      this.setScanStatus('Validation failed', 'err');
+      toast(msg, 'err');
+    };
+
+    /* ---- Validations ---- */
+    if (!ufid) return fail('UFID tag is required.');
+    if (!ufid.startsWith(UFID_PREFIX))
+      return fail(`UFID must start with "${UFID_PREFIX}" (received: ${escapeHtml(ufid)})`);
+    if (ufid.length < UFID_MIN_LEN)
+      return fail(`UFID must be at least ${UFID_MIN_LEN} characters long.`);
+    if (signal < MIN_SIGNAL)
+      return fail(`Signal strength ${signal}% is below the minimum of ${MIN_SIGNAL}%. Re-scan the tag.`);
+    if (!rackId) return fail('Please select a rack.');
+    if (!Data.racks.some(r => r.id === rackId))
+      return fail(`Rack "${escapeHtml(rackId)}" does not exist.`);
+    if (!invoice) return fail('Supply Name / Invoice No is required.');
+    if (!boxNo)   return fail('Box No is required.');
+    if (!company) return fail('Company is required.');
+    if (isNaN(kg) || kg <= 0) return fail('Please enter a valid weight in KG.');
+    if (!bop)     return fail('Please select a BOP category.');
+    if (Data.bags.some(b => b.ufid === ufid))
+      return fail(`UFID "${escapeHtml(ufid)}" is already registered (duplicate).`);
+
+    /* ---- Save ---- */
+    const bag = {
+      ufid,
+      rackId,
+      row: rackId.split('-')[0],
+      side: rackId.split('-')[1],
+      signal: Number(signal),
+      invoice,
+      boxNo,
+      company,
+      kg: Number(kg),
+      bop,
+      scannedAt: Date.now()
+    };
+
+    try{
+      await Data.addBag(bag);
+    }catch(e){
+      if (e.message === 'DUPLICATE') return fail(`UFID "${escapeHtml(ufid)}" already exists.`);
+      return fail('Save error: ' + e.message);
+    }
+
+    /* ---- Success ---- */
+    flash();
+    ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
+    setTimeout(() => ufidEl.classList.remove('ok'), 1200);
+
+    hint.className = 'hint ok';
+    hint.innerHTML = `<span>✅</span><span><b>${escapeHtml(ufid)}</b> → <b>${escapeHtml(rackId)}</b> saved successfully. (${escapeHtml(bop)} • ${kg} KG • ${Number(signal).toFixed(0)}% signal)</span>`;
+    this.setScanStatus('Saved successfully', 'ok');
+    toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
+
+    /* Reset form for next scan (keep rack + supply defaults for speed) */
+    ufidEl.value = '';
+    $('#boxInput').value = '';
+    $('#kgInput').value  = '';
+    $('#bopInput').value = '';
+    $('#signalInput').value = 98;
+    this.updateSigBar();
+    ufidEl.focus();
+
+    this.refreshAll();
+    this.renderScan();
+  },
+
+  /* ---------- INVENTORY ---------- */
+  renderInventory(){
+    const q    = $('#searchInput').value.trim().toLowerCase();
+    const rack = $('#filterRack').value;
+    const bopF = $('#filterBOP').value;
+
+    /* Filter dropdowns */
+    const fRack = $('#filterRack'), curR = fRack.value;
+    fRack.innerHTML = `<option value="">All Racks</option>` +
+      Data.racks.map(r => `<option value="${escapeHtml(r.id)}">${escapeHtml(r.id)} (${Data.countIn(r.id)})</option>`).join('');
+    fRack.value = curR;
+
+    const grades = Array.from(new Set(Data.bags.map(b => b.bop).filter(Boolean))).sort();
+    const fBOP = $('#filterBOP'), curB = fBOP.value;
+    fBOP.innerHTML = `<option value="">All BOP Grades</option>` +
+      grades.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join('');
+    fBOP.value = curB;
+
+    let list = [...Data.bags].sort((a,b) => b.scannedAt - a.scannedAt);
+    if (rack) list = list.filter(b => b.rackId === rack);
+    if (bopF) list = list.filter(b => b.bop === bopF);
+    if (q)    list = list.filter(b =>
+      (b.ufid || '').toLowerCase().includes(q) ||
+      (b.rackId || '').toLowerCase().includes(q) ||
+      (b.invoice || '').toLowerCase().includes(q) ||
+      (b.boxNo || '').toLowerCase().includes(q) ||
+      (b.company || '').toLowerCase().includes(q) ||
+      (b.bop || '').toLowerCase().includes(q));
+
+    const kgTotal = list.reduce((s, b) => s + (parseFloat(b.kg) || 0), 0);
+    $('#invCount').textContent = `${list.length} bags`;
+    $('#invKG').textContent    = `${kgTotal.toFixed(1)} KG`;
+
+    const body = $('#invBody');
+    if (!list.length){
+      body.innerHTML = `<tr><td colspan="10">
+        <div class="empty"><div class="empty-ico">🔍</div><h3>No records found</h3><p>Try adjusting your search or filters</p></div>
+      </td></tr>`;
+      return;
+    }
+
+    body.innerHTML = list.map(b => `
+      <tr>
+        <td class="mono">${escapeHtml(b.ufid)}</td>
+        <td><span class="pill pill-blue">${escapeHtml(b.rackId)}</span></td>
+        <td>${escapeHtml(b.invoice || '—')}</td>
+        <td>${escapeHtml(b.boxNo || '—')}</td>
+        <td>${escapeHtml(b.company || '—')}</td>
+        <td><b>${parseFloat(b.kg || 0).toFixed(2)}</b></td>
+        <td><span class="pill pill-purple">${escapeHtml(b.bop || '—')}</span></td>
+        <td>${Number(b.signal).toFixed(0)}%</td>
+        <td style="color:var(--muted);font-size:12px">${fmtTime(b.scannedAt)}</td>
+        <td><button class="btn btn-danger btn-sm" data-del="${escapeHtml(b.ufid)}">🗑</button></td>
+      </tr>`).join('');
+
+    $$('[data-del]', body).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const ufid = btn.dataset.del;
+        if (!confirm(`Delete UFID ${ufid}?`)) return;
+        await Data.deleteBag(ufid);
+        toast(`${ufid} deleted`, 'info');
+        this.refreshAll();
+      });
+    });
+  },
+
+  exportCSV(){
+    const rows = [[
+      'UFID','Rack','Row','Side','Supply/Invoice','Box No','Company','KG','BOP Category','Signal(%)','Scanned At'
+    ]];
+    [...Data.bags].sort((a,b) => b.scannedAt - a.scannedAt).forEach(b => {
+      rows.push([
+        b.ufid, b.rackId, b.row || '', b.side || '',
+        b.invoice || '', b.boxNo || '', b.company || '',
+        parseFloat(b.kg || 0).toFixed(2), b.bop || '',
+        Number(b.signal).toFixed(0), fmtTime(b.scannedAt)
+      ]);
+    });
+    const csv  = rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `teastore-inventory-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('CSV file downloaded', 'ok');
+  },
+
+  refreshAll(){
+    this.renderDashboard();
+    this.renderRacks();
+    this.renderScan();
+    this.renderInventory();
+    MapView.renderMarkers();
+  }
+};
+
+/* =====================================================================
+   5.  MAP VIEW (Leaflet + Geolocation)
+   ===================================================================== */
+const MapView = {
+  map: null,
+  layer: null,
+  userMarker: null,
+  watchId: null,
+  placing: false,
+  inited: false,
+
+  ensure(){
+    if (this.inited) return;
+    this.inited = true;
+
+    if (typeof L === 'undefined'){
+      $('#map').innerHTML = `<div class="map-fallback">🗺️ Map library failed to load.<br>Please check your internet connection.</div>`;
+      return;
+    }
+
+    this.map = L.map('map', { zoomControl: true }).setView([6.9271, 79.8612], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(this.map);
+
+    this.layer = L.layerGroup().addTo(this.map);
+
+    this.map.on('click', async (e) => {
+      if (!this.placing) return;
+      const rackId = $('#mapRackInput').value.trim().toUpperCase();
+      if (!rackId || !Data.racks.some(r => r.id === rackId)){
+        toast('Please select a valid rack first.', 'err');
+        return;
+      }
+      await Data.updateRack(rackId, { lat: e.latlng.lat, lng: e.latlng.lng });
+      this.placing = false;
+      $('#placeModeBtn').classList.remove('btn-green');
+      $('#placeModeBtn').classList.add('btn-ghost');
+      $('#mapHint').className = 'hint ok';
+      $('#mapHint').innerHTML = `<span>✅</span><span><b>${escapeHtml(rackId)}</b> location saved (${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)})</span>`;
+      toast(`${rackId} location saved`, 'ok');
+      this.renderMarkers();
+      UI.renderRacks();
+    });
+
+    setTimeout(() => this.map.invalidateSize(), 200);
+  },
+
+  startPlaceMode(){
+    const rackId = $('#mapRackInput').value.trim().toUpperCase();
+    if (!rackId){ toast('Enter a rack ID.', 'err'); return; }
+    if (!Data.racks.some(r => r.id === rackId)){ toast(`Rack "${rackId}" does not exist.`, 'err'); return; }
+    this.placing = !this.placing;
+    const btn = $('#placeModeBtn');
+    btn.classList.toggle('btn-green', this.placing);
+    btn.classList.toggle('btn-ghost', !this.placing);
+    $('#mapHint').className = 'hint ' + (this.placing ? 'warn' : 'info');
+    $('#mapHint').innerHTML = this.placing
+      ? `<span>🎯</span><span>Click on the map to set the location for <b>${escapeHtml(rackId)}</b>…</span>`
+      : `<span>📍</span><span>Select a rack, click <b>Place Location</b>, then click on the map to save GPS coordinates.</span>`;
+  },
+
+  renderMarkers(){
+    if (!this.map || !this.layer) return;
+    this.layer.clearLayers();
+
+    Data.racks.forEach(r => {
+      if (r.lat == null || r.lng == null) return;
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="rm-dot"></div>`,
+        iconSize: [20,20], iconAnchor: [10,10]
+      });
+      const m = L.marker([r.lat, r.lng], { icon }).addTo(this.layer);
+      const cnt = Data.countIn(r.id);
+      const kg  = Data.bags.filter(b => b.rackId === r.id)
+                          .reduce((s, b) => s + (parseFloat(b.kg) || 0), 0);
+      m.bindPopup(`
+        <div style="font-family:inherit;min-width:180px">
+          <div style="font-weight:800;font-size:14px;margin-bottom:6px;color:#0f172a">${escapeHtml(r.id)}</div>
+          <div style="font-size:12px;color:#64748b;font-weight:600;line-height:1.7">
+            Row: <b>${escapeHtml(r.row)}</b><br>
+            Side: <b>${r.side === 'L' ? 'Right' : 'Left'}</b><br>
+            Position: <b>${r.pos}</b><br>
+            Bags: <b style="color:#2563eb">${cnt}</b><br>
+            Weight: <b style="color:#10b981">${kg.toFixed(1)} KG</b>
+          </div>
+        </div>`);
+    });
+  },
+
+  locateMe(){
+    if (!navigator.geolocation){ toast('Geolocation is not supported by this browser.', 'err'); return; }
+    if (!this.map){ toast('Map is not loaded.', 'err'); return; }
+
+    toast('Locating your position…', 'info');
+
+    if (this.watchId !== null) navigator.geolocation.clearWatch(this.watchId);
+
+    this.watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng, accuracy } = pos.coords;
+        if (this.userMarker){
+          this.userMarker.setLatLng([lat, lng]);
+        } else {
+          const icon = L.divIcon({
+            className: '',
+            html: `<div class="user-dot" style="animation:pulse 1.8s infinite"></div>`,
+            iconSize: [18,18], iconAnchor: [9,9]
+          });
+          this.userMarker = L.marker([lat, lng], { icon }).addTo(this.map);
+        }
+        this.userMarker.bindPopup(`📍 Your location<br><small>Accuracy ±${accuracy.toFixed(0)} m</small>`);
+        this.map.setView([lat, lng], Math.max(this.map.getZoom(), 16));
+      },
+      (err) => toast('GPS error: ' + err.message, 'err'),
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+    );
+  }
+};
+
+/* =====================================================================
+   6.  BOOTSTRAP
+   ===================================================================== */
+async function boot(){
+  /* Live clock */
+  setInterval(() => {
+    const d = new Date(), p = n => String(n).padStart(2,'0');
+    $('#clock').textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  }, 1000);
+
+  UI.initNav();
+  await Data.init();
+
+  /* Events */
+  $('#addRacksBtn').addEventListener('click', () => UI.addRacks());
+
+  $('#saveBagBtn').addEventListener('click', () => UI.saveBag());
+  $('#ufidInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); }
+  });
+  $('#signalInput').addEventListener('input', () => UI.updateSigBar());
+  $('#kgInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); }
+  });
+
+  $('#searchInput').addEventListener('input', () => UI.renderInventory());
+  $('#filterRack').addEventListener('change', () => UI.renderInventory());
+  $('#filterBOP').addEventListener('change', () => UI.renderInventory());
+  $('#exportBtn').addEventListener('click', () => UI.exportCSV());
+
+  $('#locateMeBtn').addEventListener('click', () => MapView.locateMe());
+  $('#placeModeBtn').addEventListener('click', () => MapView.startPlaceMode());
+
+  UI.refreshAll();
+
+  toast(
+    Data.mode === 'firebase'
+      ? 'Firebase connected successfully ✅'
+      : 'Running in Local Storage mode — add your Firebase projectId to enable cloud sync',
+    Data.mode === 'firebase' ? 'ok' : 'info'
+  );
+
+  setTimeout(() => $('#ufidInput').focus(), 600);
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
