@@ -146,10 +146,13 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .btn svg{width:17px;height:17px;stroke-width:2.2}
 .btn-primary{background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.26)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(37,99,235,.36)}
+.btn-primary:active{transform:translateY(0)}
 .btn-ghost{background:var(--blue-soft);color:var(--blue)}
 .btn-ghost:hover{background:#dbeafe;transform:translateY(-2px)}
 .btn-green{background:var(--green-soft);color:#047857}
 .btn-green:hover{background:#d1fae5;transform:translateY(-2px)}
+.btn-amber{background:var(--amber-soft);color:#b45309;border:1.5px solid #fcd34d}
+.btn-amber:hover{background:#fef3c7;transform:translateY(-2px)}
 .btn-danger{background:var(--red-soft);color:var(--red)}
 .btn-danger:hover{background:#fee2e2;transform:translateY(-2px)}
 .btn-block{width:100%}
@@ -223,11 +226,76 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
   font-family:'SF Mono',Menlo,Consolas,monospace;text-transform:uppercase;
 }
 .scan-input.ok{border-color:var(--green);box-shadow:0 0 0 4px rgba(16,185,129,.14)}
+.scan-input.warn{border-color:var(--amber);box-shadow:0 0 0 4px rgba(245,158,11,.14)}
 .scan-input.err{border-color:#ef4444;box-shadow:0 0 0 4px rgba(239,68,68,.13);animation:shake .4s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
 .sig-bar{height:6px;border-radius:6px;background:#eef2f7;overflow:hidden;margin-top:2px}
 .sig-fill{height:100%;width:98%;border-radius:6px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .3s ease, background .3s}
 .sig-fill.low{background:linear-gradient(90deg,#f59e0b,#ef4444)}
+
+/* ---------- VERIFY PANEL ---------- */
+.verify-panel{
+  margin-bottom:16px;border-radius:14px;overflow:hidden;
+  animation:slideDown .35s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.verify-panel.found{
+  background:linear-gradient(135deg,#ecfdf5,#f0fdf4);
+  border:1.8px solid var(--green);
+  box-shadow:0 10px 26px rgba(16,185,129,.15);
+}
+.verify-panel.new{
+  background:linear-gradient(135deg,#eff6ff,#f0f9ff);
+  border:1.8px solid var(--blue-2);
+  box-shadow:0 8px 22px rgba(59,130,246,.12);
+}
+.vp-head{
+  display:flex;align-items:center;gap:10px;padding:13px 16px;
+  font-weight:800;font-size:13px;letter-spacing:.2px;
+}
+.verify-panel.found .vp-head{color:#047857;background:rgba(16,185,129,.08)}
+.verify-panel.new .vp-head{color:#1e40af;background:rgba(59,130,246,.07)}
+.vp-head .ico{
+  width:24px;height:24px;border-radius:8px;display:grid;place-items:center;
+  font-size:14px;color:#fff;font-weight:900;flex:0 0 24px;
+}
+.verify-panel.found .vp-head .ico{background:var(--green)}
+.verify-panel.new .vp-head .ico{background:var(--blue-2)}
+.vp-head .tag{
+  margin-left:auto;font-size:9.5px;font-weight:900;letter-spacing:1.2px;
+  padding:5px 11px;border-radius:20px;
+}
+.verify-panel.found .vp-head .tag{background:var(--green);color:#fff}
+.verify-panel.new .vp-head .tag{background:var(--blue-2);color:#fff}
+
+.vp-body{
+  padding:12px 16px 14px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;
+}
+.vp-field{
+  background:#fff;border-radius:11px;padding:9px 12px;
+  border:1px solid rgba(15,23,42,.06);
+}
+.verify-panel.found .vp-field{border-color:#a7f3d0}
+.verify-panel.new .vp-field{border-color:#bfdbfe}
+.vp-field label{
+  font-size:9.5px;font-weight:800;color:var(--muted);
+  letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:3px;
+}
+.vp-field .val{
+  font-size:13px;font-weight:800;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.vp-field .val.loc{color:var(--blue);font-family:'SF Mono',Menlo,monospace;letter-spacing:.4px}
+.vp-field.span-2{grid-column:span 2}
+
+.vp-actions{
+  padding:0 16px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.vp-actions .vp-note{
+  font-size:11.5px;font-weight:700;color:#047857;
+  display:flex;align-items:center;gap:6px;flex:1;min-width:180px;
+}
 
 .section-sep{
   display:flex;align-items:center;gap:12px;margin:22px 0 14px;
@@ -270,7 +338,6 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
   background:var(--green-soft);color:#047857;
 }
 
-/* Table */
 .table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:1100px}
 thead th{
@@ -307,7 +374,6 @@ tbody tr:last-child td{border-bottom:0}
 }
 .map-fallback{padding:40px;text-align:center;color:var(--muted);font-weight:600}
 
-/* Toasts */
 #toasts{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:11px;pointer-events:none}
 .toast{
   min-width:280px;max-width:420px;padding:14px 18px;border-radius:14px;background:#fff;
@@ -343,7 +409,7 @@ tbody tr:last-child td{border-bottom:0}
 .toolbar input,.toolbar select{width:auto;min-width:170px;padding:10px 13px;font-size:13.5px}
 .spacer{flex:1}
 
-/* ---------- DIAGRAM MODAL ---------- */
+/* Diagram modal */
 .modal-bg{
   position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9997;
   display:none;align-items:flex-start;justify-content:center;padding:28px;
@@ -367,62 +433,29 @@ tbody tr:last-child td{border-bottom:0}
 .modal-head p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px}
 .modal-body{padding:24px;background:#fbfdff}
 
-/* Warehouse diagram */
-.wh{
-  background:#fff;border:2px solid var(--line);border-radius:16px;padding:20px;
-  box-shadow:inset 0 2px 12px rgba(37,99,235,.04);
-}
-.wh-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding-bottom:14px;margin-bottom:18px;border-bottom:2px dashed var(--line);
-}
+.wh{background:#fff;border:2px solid var(--line);border-radius:16px;padding:20px;box-shadow:inset 0 2px 12px rgba(37,99,235,.04);}
+.wh-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;margin-bottom:18px;border-bottom:2px dashed var(--line);}
 .wh-title{font-size:13px;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase}
 .wh-legend{display:flex;gap:18px;font-size:11.5px;font-weight:700;color:var(--muted);flex-wrap:wrap}
 .wh-legend span{display:flex;align-items:center;gap:6px}
 .wh-key{width:14px;height:14px;border-radius:5px;border:1.5px solid}
 .wh-key.L{background:var(--blue-soft);border-color:var(--blue)}
 .wh-key.R{background:var(--green-soft);border-color:var(--green)}
-
-.wh-row{
-  display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:stretch;
-  margin-bottom:14px;
-}
-.wh-row-label{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;
-  border-radius:12px;font-weight:900;font-size:20px;letter-spacing:1px;
-  padding:10px 0;box-shadow:0 6px 16px rgba(37,99,235,.22);
-}
+.wh-row{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:stretch;margin-bottom:14px;}
+.wh-row-label{display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;border-radius:12px;font-weight:900;font-size:20px;letter-spacing:1px;padding:10px 0;box-shadow:0 6px 16px rgba(37,99,235,.22);}
 .wh-row-label small{font-size:9px;font-weight:700;opacity:.85;letter-spacing:1px;margin-top:2px}
-.wh-racks{
-  display:grid;gap:8px;padding:10px;border-radius:12px;
-  background:repeating-linear-gradient(90deg,#f8fbff 0,#f8fbff 40px,#f2f8ff 40px,#f2f8ff 80px);
-  border:1.5px dashed var(--line);min-height:64px;
-}
-.wh-racks.cols-1{grid-template-columns:1fr}
+.wh-racks{display:grid;gap:8px;padding:10px;border-radius:12px;background:repeating-linear-gradient(90deg,#f8fbff 0,#f8fbff 40px,#f2f8ff 40px,#f2f8ff 80px);border:1.5px dashed var(--line);min-height:64px;}
 .wh-pos{display:grid;gap:6px}
 .wh-pos.dual{grid-template-columns:1fr 1fr}
-.wh-box{
-  border-radius:10px;padding:8px 10px;font-weight:800;
-  display:flex;flex-direction:column;gap:2px;min-width:0;
-  transition:all .22s;cursor:pointer;position:relative;
-  border:1.6px solid transparent;
-}
+.wh-box{border-radius:10px;padding:8px 10px;font-weight:800;display:flex;flex-direction:column;gap:2px;min-width:0;transition:all .22s;cursor:pointer;position:relative;border:1.6px solid transparent;}
 .wh-box:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 18px rgba(37,99,235,.18)}
 .wh-box.L{background:var(--blue-soft);color:#1e40af;border-color:var(--blue-line)}
 .wh-box.R{background:var(--green-soft);color:#047857;border-color:#a7f3d0}
 .wh-box .id{font-size:11.5px;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
-.wh-box .cnt{
-  font-size:16px;font-weight:900;letter-spacing:-.5px;
-  display:flex;align-items:baseline;gap:3px;
-}
+.wh-box .cnt{font-size:16px;font-weight:900;letter-spacing:-.5px;display:flex;align-items:baseline;gap:3px;}
 .wh-box .cnt small{font-size:9px;font-weight:700;opacity:.7;letter-spacing:.6px;text-transform:uppercase}
 .wh-box.empty{opacity:.5;border-style:dashed;background:#fff;color:var(--muted)}
-
-.wh-summary{
-  margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);
-  display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--muted);
-}
+.wh-summary{margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--muted);}
 .wh-summary b{color:var(--ink);font-size:14px}
 
 @media(max-width:900px){
@@ -618,6 +651,9 @@ tbody tr:last-child td{border-bottom:0}
             <input id="ufidInput" class="scan-input" placeholder="6M••••••" autocomplete="off" spellcheck="false" />
           </div>
 
+          <!-- ============ VERIFY PANEL — shows existing / new state ============ -->
+          <div id="verifyPanel" style="display:none"></div>
+
           <div class="grid-2">
             <div class="field">
               <label>Signal Strength (%) <span class="req">*</span></label>
@@ -673,7 +709,7 @@ tbody tr:last-child td{border-bottom:0}
 
           <div class="hint info" id="scanHint">
             <span>💡</span>
-            <span>Scan the UFID tag with the 6M scanner and press <b>Enter</b>. Signal strength must be at least <b>98%</b>. Duplicate UFIDs are automatically rejected.</span>
+            <span>Scan the UFID tag with the 6M scanner and press <b>Enter</b>. If the UFID already exists, its location &amp; data are shown — you can verify and re-save. Signal must be ≥ <b>98%</b>.</span>
           </div>
         </div>
 
@@ -756,7 +792,6 @@ tbody tr:last-child td{border-bottom:0}
   </main>
 </div>
 
-<!-- ================= FULLSCREEN DIAGRAM MODAL ================= -->
 <div class="modal-bg" id="diagramModal">
   <div class="modal">
     <div class="modal-head">
@@ -851,11 +886,8 @@ const Storage = {
   available: false,
   memory: { racks: [], bags: [] },
   test(){
-    try {
-      const k = '__tsp_test__';
-      localStorage.setItem(k, '1'); localStorage.removeItem(k);
-      this.available = true; return true;
-    } catch (e){ this.available = false; return false; }
+    try { const k = '__tsp_test__'; localStorage.setItem(k, '1'); localStorage.removeItem(k); this.available = true; return true; }
+    catch (e){ this.available = false; return false; }
   },
   read(key){
     if (this.available){
@@ -993,38 +1025,26 @@ const Data = {
     this._persist();
   },
 
-  /* ---------- NEW: delete a single rack + its bags ---------- */
   async deleteRack(id){
     if (!id) return 0;
     const bagCount = this.bags.filter(b => b.rackId === id).length;
-
-    // Remove rack + all its bags from Firebase
     if (this.mode === 'firebase' && this.db){
       try {
         await this.db.ref(`${DB_ROOT}/racks/${id}`).remove();
-        // Remove bag entries referencing this rack
         const updates = {};
-        this.bags.filter(b => b.rackId === id).forEach(b => {
-          updates[`${DB_ROOT}/bags/${b.ufid}`] = null;
-        });
+        this.bags.filter(b => b.rackId === id).forEach(b => { updates[`${DB_ROOT}/bags/${b.ufid}`] = null; });
         if (Object.keys(updates).length) await this.db.ref().update(updates);
-      } catch (e){
-        console.warn('[RTDB] deleteRack failed:', e.message);
-      }
+      } catch (e){ console.warn('[RTDB] deleteRack failed:', e.message); }
     }
-
-    // Local
     this.racks = this.racks.filter(r => r.id !== id);
     this.bags  = this.bags.filter(b => b.rackId !== id);
     this._persist();
     return bagCount;
   },
 
-  /* ---------- NEW: delete an entire row ---------- */
   async deleteRow(rowLetter){
     if (!rowLetter) return { racks: 0, bags: 0 };
     const letter = String(rowLetter).toUpperCase();
-
     const racksInRow = this.racks.filter(r => r.row === letter);
     const bagCount   = this.bags.filter(b => b.row === letter || (b.rackId||'').startsWith(letter + '-')).length;
 
@@ -1038,15 +1058,11 @@ const Data = {
           }
         });
         if (Object.keys(updates).length) await this.db.ref().update(updates);
-      } catch (e){
-        console.warn('[RTDB] deleteRow failed:', e.message);
-      }
+      } catch (e){ console.warn('[RTDB] deleteRow failed:', e.message); }
     }
-
     this.racks = this.racks.filter(r => r.row !== letter);
     this.bags  = this.bags.filter(b => b.row !== letter && !(b.rackId||'').startsWith(letter + '-'));
     this._persist();
-
     return { racks: racksInRow.length, bags: bagCount };
   },
 
@@ -1067,10 +1083,39 @@ const Data = {
         toast('Cloud sync unavailable — saved locally instead.', 'warn', 4200);
       }
     }
-
     if (!this.bags.some(b => b.ufid === bag.ufid)) this.bags.unshift(bag);
     this._sort();
     this._persist();
+  },
+
+  /* ---------- NEW: update an existing bag ---------- */
+  async updateBag(bag){
+    const idx = this.bags.findIndex(b => b.ufid === bag.ufid);
+    if (idx === -1) throw new Error('NOT_FOUND');
+    const existing = this.bags[idx];
+
+    // Preserve original scannedAt, add updatedAt
+    const merged = {
+      ...existing,
+      ...bag,
+      scannedAt: existing.scannedAt,
+      updatedAt: Date.now(),
+      updateCount: (existing.updateCount || 0) + 1
+    };
+
+    if (this.mode === 'firebase' && this.db){
+      try { await this.db.ref(`${DB_ROOT}/bags/${bag.ufid}`).set(merged); }
+      catch (e){
+        console.warn('[RTDB] updateBag failed:', e.message);
+        this.mode = Storage.available ? 'local' : 'memory';
+        UI.updateConn();
+        toast('Cloud update failed — saved locally instead.', 'warn', 4200);
+      }
+    }
+    this.bags[idx] = merged;
+    this._sort();
+    this._persist();
+    return merged;
   },
 
   async deleteBag(ufid){
@@ -1087,9 +1132,13 @@ const Data = {
       try { await this.db.ref(DB_ROOT).remove(); }
       catch (e){ console.warn('[RTDB] clear failed:', e.message); }
     }
-    this.racks = [];
-    this.bags  = [];
+    this.racks = []; this.bags = [];
     this._persist();
+  },
+
+  findBag(ufid){
+    if (!ufid) return null;
+    return this.bags.find(b => b.ufid === String(ufid).trim().toUpperCase()) || null;
   },
 
   countIn(rackId){ return this.bags.filter(b => b.rackId === rackId).length; },
@@ -1100,8 +1149,19 @@ const Data = {
 /* =====================================================================
    UI CONTROLLER
    ===================================================================== */
+const DEFAULT_SAVE_BTN = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+  Save Bag to Rack
+`;
+const UPDATE_SAVE_BTN = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+  Update Bag Record
+`;
+
 const UI = {
   currentView: 'dashboard',
+  currentUFID: null,   // ufid currently loaded into form (if existing)
+  ufidTimer: null,
 
   initNav(){
     $$('.nav-item').forEach(btn => {
@@ -1117,7 +1177,7 @@ const UI = {
     const titles = {
       dashboard: ['Dashboard',              'Warehouse overview — racks, UFID tags & inventory'],
       racks:     ['Rack Management',        'Configure rows, sides and rack numbering'],
-      scan:      ['UFID Scanner',           'Register tea bags into racks'],
+      scan:      ['UFID Scanner',           'Register or update tea bags in racks'],
       map:       ['Live Location Map',      'GPS positions of racks and current device location'],
       diagram:   ['Warehouse Diagram',      'Visual layout of all rows and racks'],
       inventory: ['Inventory Register',     'Complete record of all scanned tea bags']
@@ -1137,6 +1197,341 @@ const UI = {
     if (Data.mode === 'firebase'){ dot.className = 'dot live'; txt.textContent = 'Firebase RTDB Connected'; }
     else if (Data.mode === 'local'){ dot.className = 'dot off'; txt.textContent = 'Local Storage'; }
     else { dot.className = 'dot err'; txt.textContent = 'Memory only'; }
+  },
+
+  /* ============== UFID VERIFY / EXISTING-DATA CHECK ============== */
+  checkUFID(){
+    const ufidEl = $('#ufidInput');
+    const panel  = $('#verifyPanel');
+    const btn    = $('#saveBagBtn');
+    if (!ufidEl || !panel || !btn) return null;
+
+    const ufid = String(ufidEl.value || '').trim().toUpperCase();
+    this.currentUFID = null;
+
+    // Too short / wrong prefix → hide panel, restore default button
+    if (!ufid || ufid.length < UFID_MIN_LEN || !ufid.startsWith(UFID_PREFIX)){
+      panel.style.display = 'none';
+      panel.innerHTML = '';
+      panel.className = 'verify-panel';
+      ufidEl.classList.remove('warn');
+      btn.innerHTML = DEFAULT_SAVE_BTN;
+      btn.classList.remove('btn-amber');
+      btn.classList.add('btn-primary');
+      return null;
+    }
+
+    const existing = Data.findBag(ufid);
+
+    if (existing){
+      /* ---------- EXISTING RECORD FOUND ---------- */
+      this.currentUFID = existing.ufid;
+      ufidEl.classList.add('warn');
+
+      const sideLabel = existing.side === 'L' ? 'Right' : existing.side === 'R' ? 'Left' : '—';
+      const updatedInfo = existing.updatedAt
+        ? `Updated: ${fmtTime(existing.updatedAt)} (${existing.updateCount || 1}×)`
+        : 'Not updated since first save';
+
+      panel.className = 'verify-panel found';
+      panel.style.display = 'block';
+      panel.innerHTML = `
+        <div class="vp-head">
+          <span class="ico">✓</span>
+          <span>Existing UFID — record already in storage</span>
+          <span class="tag">ALREADY SAVED</span>
+        </div>
+        <div class="vp-body">
+          <div class="vp-field span-2">
+            <label>📍 Current Location (Rack)</label>
+            <div class="val loc">${escapeHtml(existing.rackId)}</div>
+          </div>
+          <div class="vp-field">
+            <label>Row</label>
+            <div class="val">${escapeHtml(existing.row || '—')}</div>
+          </div>
+          <div class="vp-field">
+            <label>Side</label>
+            <div class="val">${escapeHtml(sideLabel)}</div>
+          </div>
+          <div class="vp-field">
+            <label>Company</label>
+            <div class="val">${escapeHtml(existing.company || '—')}</div>
+          </div>
+          <div class="vp-field">
+            <label>Supply / Invoice</label>
+            <div class="val">${escapeHtml(existing.invoice || '—')}</div>
+          </div>
+          <div class="vp-field">
+            <label>Box No</label>
+            <div class="val">${escapeHtml(existing.boxNo || '—')}</div>
+          </div>
+          <div class="vp-field">
+            <label>Weight</label>
+            <div class="val">${parseFloat(existing.kg || 0).toFixed(2)} KG</div>
+          </div>
+          <div class="vp-field">
+            <label>BOP Grade</label>
+            <div class="val">${escapeHtml(existing.bop || '—')}</div>
+          </div>
+          <div class="vp-field">
+            <label>Signal</label>
+            <div class="val">${Number(existing.signal || 0).toFixed(0)}%</div>
+          </div>
+          <div class="vp-field span-2">
+            <label>First Scanned</label>
+            <div class="val">${fmtTime(existing.scannedAt)}</div>
+          </div>
+          <div class="vp-field span-2">
+            <label>History</label>
+            <div class="val" style="color:#047857">${escapeHtml(updatedInfo)}</div>
+          </div>
+        </div>
+        <div class="vp-actions">
+          <div class="vp-note">✓ Form loaded with existing data — verify and click <b>Update Bag Record</b> to re-save.</div>
+          <button type="button" class="btn btn-ghost btn-sm" id="vpClearBtn">✕ Clear & scan different UFID</button>
+        </div>
+      `;
+
+      // Auto-fill the form with existing data
+      this.loadExistingIntoForm(existing);
+
+      // Change save button to UPDATE style
+      btn.innerHTML = UPDATE_SAVE_BTN;
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-amber');
+
+      // Bind clear button
+      const clearBtn = $('#vpClearBtn');
+      if (clearBtn) clearBtn.addEventListener('click', () => this.clearScanForm(true));
+
+      this.setScanStatus('Existing UFID loaded', 'warn');
+      return existing;
+    } else {
+      /* ---------- NEW UFID ---------- */
+      ufidEl.classList.remove('warn');
+
+      panel.className = 'verify-panel new';
+      panel.style.display = 'block';
+      panel.innerHTML = `
+        <div class="vp-head">
+          <span class="ico">+</span>
+          <span>New UFID — no existing record found</span>
+          <span class="tag">NEW</span>
+        </div>
+        <div style="padding:0 16px 14px;font-size:12px;color:#1e40af;font-weight:600;line-height:1.6">
+          This tag has not been registered before. Fill in the supply details below and click
+          <b>Save Bag to Rack</b> to create a new record.
+        </div>
+      `;
+
+      btn.innerHTML = DEFAULT_SAVE_BTN;
+      btn.classList.remove('btn-amber');
+      btn.classList.add('btn-primary');
+
+      this.setScanStatus('New UFID — ready to save', 'ok');
+      return null;
+    }
+  },
+
+  loadExistingIntoForm(existing){
+    if (!existing) return;
+    $('#rackInput').value    = existing.rackId || '';
+    $('#invoiceInput').value = existing.invoice || '';
+    $('#boxInput').value     = existing.boxNo   || '';
+    $('#companyInput').value = existing.company || '';
+    $('#kgInput').value      = existing.kg      || '';
+    $('#bopInput').value     = existing.bop     || '';
+    // keep current signal (fresh reading)
+    this.updateSigBar();
+  },
+
+  clearScanForm(clearUFID){
+    if (clearUFID){
+      $('#ufidInput').value = '';
+      $('#verifyPanel').style.display = 'none';
+      $('#verifyPanel').innerHTML = '';
+      $('#ufidInput').classList.remove('warn','ok','err');
+      this.currentUFID = null;
+
+      const btn = $('#saveBagBtn');
+      if (btn){ btn.innerHTML = DEFAULT_SAVE_BTN; btn.classList.remove('btn-amber'); btn.classList.add('btn-primary'); }
+    }
+    $('#rackInput').value    = '';
+    $('#invoiceInput').value = '';
+    $('#boxInput').value     = '';
+    $('#companyInput').value = '';
+    $('#kgInput').value      = '';
+    $('#bopInput').value     = '';
+    $('#signalInput').value  = 98;
+    this.updateSigBar();
+
+    const hint = $('#scanHint');
+    if (hint){
+      hint.className = 'hint info';
+      hint.innerHTML = `<span>💡</span><span>Scan the UFID tag with the 6M scanner and press <b>Enter</b>. If the UFID already exists, its location &amp; data are shown — you can verify and re-save.</span>`;
+    }
+    this.setScanStatus('Ready to scan', 'ok');
+
+    const ufidEl = $('#ufidInput');
+    if (ufidEl) ufidEl.focus();
+  },
+
+  /* ======================= SAVE / UPDATE BAG ======================= */
+  async saveBag(){
+    try {
+      const parsed = this.parseScan($('#ufidInput').value);
+      const ufid   = parsed.ufid;
+
+      let signal = parsed.sig;
+      if (signal === null) signal = parseFloat($('#signalInput').value);
+      if (isNaN(signal)) signal = 0;
+
+      const rackId  = String($('#rackInput').value || '').trim().toUpperCase();
+      const invoice = String($('#invoiceInput').value || '').trim();
+      const boxNo   = String($('#boxInput').value || '').trim();
+      const company = String($('#companyInput').value || '').trim();
+      const kg      = parseFloat($('#kgInput').value);
+      const bop     = String($('#bopInput').value || '').trim();
+
+      const ufidEl = $('#ufidInput');
+      const hint   = $('#scanHint');
+
+      const fail = (msg, fieldSel) => {
+        if (fieldSel){
+          const f = $(fieldSel);
+          if (f){
+            f.classList.add('err');
+            setTimeout(() => f.classList.remove('err'), 800);
+            try { f.focus(); } catch(_){}
+          }
+        }
+        if (ufidEl){
+          ufidEl.classList.remove('ok'); ufidEl.classList.add('err');
+          setTimeout(() => ufidEl.classList.remove('err'), 500);
+        }
+        if (hint){
+          hint.className = 'hint err';
+          hint.innerHTML = `<span>⛔</span><span>${msg}</span>`;
+        }
+        this.setScanStatus('Validation failed', 'err');
+        toast(msg, 'err', 4800);
+      };
+
+      /* ---- Validation (NO duplicate rejection anymore) ---- */
+      if (!ufid)                          return fail('UFID tag is required.', '#ufidInput');
+      if (!ufid.startsWith(UFID_PREFIX))  return fail(`UFID must start with "${UFID_PREFIX}" (got "${escapeHtml(ufid)}").`, '#ufidInput');
+      if (ufid.length < UFID_MIN_LEN)     return fail(`UFID must be at least ${UFID_MIN_LEN} characters (got ${ufid.length}).`, '#ufidInput');
+      if (signal < MIN_SIGNAL)            return fail(`Signal is ${signal}% — minimum is ${MIN_SIGNAL}%.`, '#signalInput');
+      if (!rackId)                        return fail('Rack ID is required.', '#rackInput');
+
+      if (!Data.racks.some(r => r.id === rackId)){
+        const sample = Data.racks.slice(0, 6).map(r => r.id).join(', ') || 'none';
+        return fail(`Rack "${escapeHtml(rackId)}" does not exist. Available: ${escapeHtml(sample)}`, '#rackInput');
+      }
+      if (!invoice)             return fail('Supply Name / Invoice No is required.', '#invoiceInput');
+      if (!boxNo)               return fail('Box No is required.', '#boxInput');
+      if (!company)             return fail('Company is required.', '#companyInput');
+      if (isNaN(kg) || kg <= 0) return fail('Weight (KG) must be a positive number.', '#kgInput');
+      if (!bop)                 return fail('Please select a BOP category.', '#bopInput');
+
+      const bag = {
+        ufid, rackId,
+        row: rackId.split('-')[0],
+        side: rackId.split('-')[1],
+        signal: Number(signal),
+        invoice, boxNo, company,
+        kg: Number(kg), bop,
+        scannedAt: Date.now()
+      };
+
+      const existing = Data.findBag(ufid);
+
+      if (existing){
+        /* ===================== UPDATE FLOW ===================== */
+        const isDifferentRack = existing.rackId !== rackId;
+        const changes = [];
+        if (existing.rackId  !== rackId)  changes.push(`Location: ${existing.rackId} → ${rackId}`);
+        if (existing.company !== company) changes.push(`Company: ${existing.company || '—'} → ${company}`);
+        if (existing.invoice !== invoice) changes.push(`Invoice: ${existing.invoice || '—'} → ${invoice}`);
+        if (existing.boxNo   !== boxNo)   changes.push(`Box No: ${existing.boxNo || '—'} → ${boxNo}`);
+        if (Number(existing.kg) !== Number(kg)) changes.push(`KG: ${existing.kg} → ${kg}`);
+        if (existing.bop     !== bop)     changes.push(`BOP: ${existing.bop || '—'} → ${bop}`);
+
+        let msg = `UFID ${ufid} already exists at ${existing.rackId}.\n\n`;
+        msg += `Current:  ${existing.company} • ${existing.kg} KG • ${existing.bop}\n`;
+        msg += `New:      ${company} • ${kg} KG • ${bop}\n\n`;
+        if (changes.length){
+          msg += `Changes to be applied:\n` + changes.map(c => ` • ${c}`).join('\n') + '\n\n';
+        } else {
+          msg += `No field values have changed.\n\n`;
+        }
+        msg += `Update this record?`;
+
+        if (!confirm(msg)){
+          this.setScanStatus('Update cancelled', 'info');
+          toast('Update cancelled — record unchanged', 'info', 2600);
+          return;
+        }
+
+        try {
+          await Data.updateBag(bag);
+        } catch(e){
+          return fail('Update failed: ' + e.message);
+        }
+
+        flash();
+        if (ufidEl){
+          ufidEl.classList.remove('warn','err');
+          ufidEl.classList.add('ok');
+          setTimeout(() => ufidEl.classList.remove('ok'), 1300);
+        }
+        if (hint){
+          hint.className = 'hint ok';
+          hint.innerHTML = `<span>✓</span><span>UFID <b>${escapeHtml(ufid)}</b> updated — location <b>${escapeHtml(rackId)}</b>, ${escapeHtml(bop)}, ${kg} KG. (Signal ${Number(signal).toFixed(0)}%)</span>`;
+        }
+        this.setScanStatus('Record updated', 'ok');
+        toast(`✓ ${escapeHtml(ufid)} updated (${isDifferentRack ? 'moved to ' + escapeHtml(rackId) : 'same location'})`, 'ok');
+
+        // Reset form (keep UFID cleared so next scan is fresh)
+        this.clearScanForm(true);
+        this.refreshAll();
+        this.renderScan();
+        this.renderDiagram('#diagramInline');
+        return;
+      }
+
+      /* ===================== NEW RECORD FLOW ===================== */
+      try {
+        await Data.addBag(bag);
+      } catch(e){
+        if (e.message === 'DUPLICATE') return fail(`UFID "${escapeHtml(ufid)}" was just saved by another session. Please re-scan.`);
+        return fail('Save failed: ' + e.message);
+      }
+
+      flash();
+      if (ufidEl){
+        ufidEl.classList.remove('warn','err');
+        ufidEl.classList.add('ok');
+        setTimeout(() => ufidEl.classList.remove('ok'), 1200);
+      }
+      if (hint){
+        hint.className = 'hint ok';
+        hint.innerHTML = `<span>✅</span><span><b>${escapeHtml(ufid)}</b> → <b>${escapeHtml(rackId)}</b> saved as a NEW record. (${escapeHtml(bop)} • ${kg} KG • ${Number(signal).toFixed(0)}% signal)</span>`;
+      }
+      this.setScanStatus('Saved successfully', 'ok');
+      toast(`✔ NEW — ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
+
+      this.clearScanForm(true);
+      this.refreshAll();
+      this.renderScan();
+      this.renderDiagram('#diagramInline');
+
+    } catch (err){
+      console.error('[saveBag] fatal:', err);
+      toast('Save failed: ' + (err && err.message ? err.message : 'Unknown error'), 'err', 5500);
+      this.setScanStatus('Save failed', 'err');
+    }
   },
 
   renderDashboard(){
@@ -1181,11 +1576,12 @@ const UI = {
   },
 
   miniRow(b){
+    const isUpdated = !!b.updatedAt;
     return `
       <div class="mini">
         <div class="mini-ico">${escapeHtml(b.bop || 'T')}</div>
         <div>
-          <div class="mini-id">${escapeHtml(b.ufid)}</div>
+          <div class="mini-id">${escapeHtml(b.ufid)}${isUpdated ? ' ↻' : ''}</div>
           <div class="mini-sub">${escapeHtml(b.rackId)} • ${escapeHtml(b.company || '—')} • ${b.kg || 0} KG • ${fmtTime(b.scannedAt)}</div>
         </div>
         <div class="mini-badge">${Number(b.signal).toFixed(0)}%</div>
@@ -1232,9 +1628,7 @@ const UI = {
                 <div style="font-size:14px;font-weight:800">Row ${escapeHtml(k)}</div>
                 <div class="row-meta">${list.length} racks • ${total} bags</div>
               </div>
-              <button type="button" class="btn btn-danger btn-xs" data-del-row="${escapeHtml(k)}" title="Delete entire row ${escapeHtml(k)} and all its bags">
-                🗑 Delete Row
-              </button>
+              <button type="button" class="btn btn-danger btn-xs" data-del-row="${escapeHtml(k)}">🗑 Delete Row</button>
             </div>
             <div class="rack-grid">
               ${list.map(r => `
@@ -1249,17 +1643,15 @@ const UI = {
           </div>`;
       }).join('');
 
-      // Click on rack → jump to scan
       $$('.rack-card', tree).forEach(c => {
         c.addEventListener('click', (e) => {
-          if (e.target.closest('.rack-del')) return; // ignore delete clicks
+          if (e.target.closest('.rack-del')) return;
           $('#rackInput').value = c.dataset.rack;
           UI.go('scan');
           setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 250);
         });
       });
 
-      // Delete rack
       $$('[data-del-rack]', tree).forEach(btn => {
         btn.addEventListener('click', async (e) => {
           e.stopPropagation();
@@ -1276,7 +1668,6 @@ const UI = {
         });
       });
 
-      // Delete row
       $$('[data-del-row]', tree).forEach(btn => {
         btn.addEventListener('click', async () => {
           const rowLetter = btn.dataset.delRow;
@@ -1306,7 +1697,6 @@ const UI = {
       : `<div class="empty" style="padding:26px"><p>No data</p></div>`;
   },
 
-  /* ============ DIAGRAM RENDER ============ */
   renderDiagram(targetSel){
     const target = typeof targetSel === 'string' ? $(targetSel) : targetSel;
     if (!target) return;
@@ -1316,7 +1706,6 @@ const UI = {
       return;
     }
 
-    // Group racks by row
     const grouped = {};
     Data.racks.forEach(r => { (grouped[r.row] = grouped[r.row] || []).push(r); });
     const keys = Object.keys(grouped).sort((a,b) => rowIndex(a) - rowIndex(b));
@@ -1339,8 +1728,6 @@ const UI = {
 
         ${keys.map(rowKey => {
           const list = grouped[rowKey].sort((a,b) => (a.pos||0) - (b.pos||0));
-
-          // Group by position, so we can pair L and R
           const positions = {};
           list.forEach(r => {
             const p = r.pos || 0;
@@ -1395,12 +1782,10 @@ const UI = {
       </div>
     `;
 
-    // Click any box → jump to scan with that rack preselected
     $$('[data-diag-rack]', target).forEach(box => {
       box.addEventListener('click', () => {
         const rackId = box.dataset.diagRack;
         $('#rackInput').value = rackId;
-        // Close modal if open
         const modal = $('#diagramModal');
         if (modal && modal.classList.contains('open')) modal.classList.remove('open');
         UI.go('scan');
@@ -1410,9 +1795,8 @@ const UI = {
   },
 
   openDiagramModal(){
-    const modal = $('#diagramModal');
     this.renderDiagram('#diagramFullscreen');
-    modal.classList.add('open');
+    $('#diagramModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   },
   closeDiagramModal(){
@@ -1457,117 +1841,10 @@ const UI = {
       this.refreshAll();
       this.renderDiagram('#diagramInline');
 
-      if (added > 0){
-        toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row}`, 'ok');
-      } else {
-        toast('No new racks were added (they may already exist).', 'info');
-      }
+      if (added > 0) toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row}`, 'ok');
+      else toast('No new racks were added (they may already exist).', 'info');
     } catch (err){
-      console.error('[addRacks] error:', err);
       toast('Failed to add racks: ' + (err && err.message ? err.message : 'Unknown error'), 'err');
-    }
-  },
-
-  async saveBag(){
-    try {
-      const parsed = this.parseScan($('#ufidInput').value);
-      const ufid   = parsed.ufid;
-
-      let signal = parsed.sig;
-      if (signal === null) signal = parseFloat($('#signalInput').value);
-      if (isNaN(signal)) signal = 0;
-
-      const rackId  = String($('#rackInput').value || '').trim().toUpperCase();
-      const invoice = String($('#invoiceInput').value || '').trim();
-      const boxNo   = String($('#boxInput').value || '').trim();
-      const company = String($('#companyInput').value || '').trim();
-      const kg      = parseFloat($('#kgInput').value);
-      const bop     = String($('#bopInput').value || '').trim();
-
-      const ufidEl = $('#ufidInput');
-      const hint   = $('#scanHint');
-
-      const fail = (msg, fieldSel) => {
-        if (fieldSel){
-          const f = $(fieldSel);
-          if (f){
-            f.classList.add('err');
-            setTimeout(() => f.classList.remove('err'), 800);
-            try { f.focus(); } catch(_){}
-          }
-        }
-        if (ufidEl){
-          ufidEl.classList.remove('ok'); ufidEl.classList.add('err');
-          setTimeout(() => ufidEl.classList.remove('err'), 500);
-        }
-        if (hint){
-          hint.className = 'hint err';
-          hint.innerHTML = `<span>⛔</span><span>${msg}</span>`;
-        }
-        this.setScanStatus('Validation failed', 'err');
-        toast(msg, 'err', 4800);
-      };
-
-      if (!ufid)                          return fail('UFID tag is required.', '#ufidInput');
-      if (!ufid.startsWith(UFID_PREFIX))  return fail(`UFID must start with "${UFID_PREFIX}" (got "${escapeHtml(ufid)}").`, '#ufidInput');
-      if (ufid.length < UFID_MIN_LEN)     return fail(`UFID must be at least ${UFID_MIN_LEN} characters (got ${ufid.length}).`, '#ufidInput');
-      if (signal < MIN_SIGNAL)            return fail(`Signal is ${signal}% — minimum is ${MIN_SIGNAL}%.`, '#signalInput');
-      if (!rackId)                        return fail('Rack ID is required.', '#rackInput');
-
-      if (!Data.racks.some(r => r.id === rackId)){
-        const sample = Data.racks.slice(0, 6).map(r => r.id).join(', ') || 'none';
-        return fail(`Rack "${escapeHtml(rackId)}" does not exist. Available: ${escapeHtml(sample)}`, '#rackInput');
-      }
-      if (!invoice)             return fail('Supply Name / Invoice No is required.', '#invoiceInput');
-      if (!boxNo)               return fail('Box No is required.', '#boxInput');
-      if (!company)             return fail('Company is required.', '#companyInput');
-      if (isNaN(kg) || kg <= 0) return fail('Weight (KG) must be a positive number.', '#kgInput');
-      if (!bop)                 return fail('Please select a BOP category.', '#bopInput');
-
-      if (Data.bags.some(b => b.ufid === ufid)){
-        return fail(`UFID "${escapeHtml(ufid)}" is already registered (duplicate).`, '#ufidInput');
-      }
-
-      const bag = {
-        ufid, rackId,
-        row: rackId.split('-')[0],
-        side: rackId.split('-')[1],
-        signal: Number(signal),
-        invoice, boxNo, company,
-        kg: Number(kg), bop,
-        scannedAt: Date.now()
-      };
-
-      await Data.addBag(bag);
-
-      flash();
-      if (ufidEl){
-        ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
-        setTimeout(() => ufidEl.classList.remove('ok'), 1200);
-      }
-      if (hint){
-        hint.className = 'hint ok';
-        hint.innerHTML = `<span>✅</span><span><b>${escapeHtml(ufid)}</b> → <b>${escapeHtml(rackId)}</b> saved. (${escapeHtml(bop)} • ${kg} KG • ${Number(signal).toFixed(0)}% signal)</span>`;
-      }
-      this.setScanStatus('Saved successfully', 'ok');
-      toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
-
-      if (ufidEl) ufidEl.value = '';
-      $('#boxInput').value = '';
-      $('#kgInput').value  = '';
-      $('#bopInput').value = '';
-      $('#signalInput').value = 98;
-      this.updateSigBar();
-      if (ufidEl) ufidEl.focus();
-
-      this.refreshAll();
-      this.renderScan();
-      this.renderDiagram('#diagramInline');
-
-    } catch (err){
-      console.error('[saveBag] fatal:', err);
-      toast('Save failed: ' + (err && err.message ? err.message : 'Unknown error'), 'err', 5500);
-      this.setScanStatus('Save failed', 'err');
     }
   },
 
@@ -1656,9 +1933,13 @@ const UI = {
       return;
     }
 
-    body.innerHTML = list.map(b => `
+    body.innerHTML = list.map(b => {
+      const updBadge = b.updatedAt
+        ? `<span class="pill pill-amber" style="margin-left:6px;font-size:10px">↻ ${b.updateCount||1}×</span>`
+        : '';
+      return `
       <tr>
-        <td class="mono">${escapeHtml(b.ufid)}</td>
+        <td class="mono">${escapeHtml(b.ufid)}${updBadge}</td>
         <td><span class="pill pill-blue">${escapeHtml(b.rackId)}</span></td>
         <td>${escapeHtml(b.invoice || '—')}</td>
         <td>${escapeHtml(b.boxNo || '—')}</td>
@@ -1668,7 +1949,8 @@ const UI = {
         <td>${Number(b.signal).toFixed(0)}%</td>
         <td style="color:var(--muted);font-size:12px">${fmtTime(b.scannedAt)}</td>
         <td><button type="button" class="btn btn-danger btn-sm" data-del="${escapeHtml(b.ufid)}">🗑</button></td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     $$('[data-del]', body).forEach(btn => {
       btn.addEventListener('click', async () => {
@@ -1684,14 +1966,16 @@ const UI = {
 
   exportCSV(){
     const rows = [[
-      'UFID','Rack','Row','Side','Supply/Invoice','Box No','Company','KG','BOP Category','Signal(%)','Scanned At'
+      'UFID','Rack','Row','Side','Supply/Invoice','Box No','Company','KG','BOP Category','Signal(%)','Scanned At','Updated At','Updates'
     ]];
     [...Data.bags].sort((a,b) => b.scannedAt - a.scannedAt).forEach(b => {
       rows.push([
         b.ufid, b.rackId, b.row || '', b.side || '',
         b.invoice || '', b.boxNo || '', b.company || '',
         parseFloat(b.kg || 0).toFixed(2), b.bop || '',
-        Number(b.signal).toFixed(0), fmtTime(b.scannedAt)
+        Number(b.signal).toFixed(0), fmtTime(b.scannedAt),
+        b.updatedAt ? fmtTime(b.updatedAt) : '',
+        b.updateCount || 0
       ]);
     });
     const csv  = rows.map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(',')).join('\n');
@@ -1834,17 +2118,44 @@ async function boot(){
 
   bind('#addRacksBtn', 'click', () => UI.addRacks());
   bind('#saveBagBtn',  'click', () => UI.saveBag());
-  bind('#ufidInput',   'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
   bind('#signalInput', 'input', () => UI.updateSigBar());
-  bind('#kgInput',     'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
 
-  /* Diagram buttons */
+  /* ====== UFID auto-detect: on input (debounced) + on blur ====== */
+  const ufidEl = $('#ufidInput');
+  if (ufidEl){
+    ufidEl.addEventListener('input', () => {
+      clearTimeout(UI.ufidTimer);
+      UI.ufidTimer = setTimeout(() => UI.checkUFID(), 350);
+    });
+    ufidEl.addEventListener('blur', () => {
+      clearTimeout(UI.ufidTimer);
+      UI.checkUFID();
+    });
+    ufidEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter'){
+        e.preventDefault();
+        clearTimeout(UI.ufidTimer);
+        const existing = UI.checkUFID();
+        // If it's a brand-new UFID, save immediately. If existing, wait for user.
+        if (!existing){
+          UI.saveBag();
+        } else {
+          // Focus the update button so Enter on it confirms
+          const btn = $('#saveBagBtn');
+          if (btn) btn.focus();
+        }
+      }
+    });
+  }
+
+  bind('#kgInput', 'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
+
+  /* Diagram */
   bind('#viewDiagramBtn',    'click', () => UI.openDiagramModal());
   bind('#closeDiagramBtn',   'click', () => UI.closeDiagramModal());
   bind('#diagramRefreshBtn', 'click', () => UI.renderDiagram('#diagramInline'));
   bind('#diagramPrintBtn',   'click', () => window.print());
 
-  // Close modal on background click or ESC
   const modalBg = $('#diagramModal');
   if (modalBg){
     modalBg.addEventListener('click', (e) => { if (e.target === modalBg) UI.closeDiagramModal(); });
