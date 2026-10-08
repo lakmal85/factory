@@ -9,6 +9,8 @@
 :root{
   --blue:#2563eb; --blue-2:#3b82f6; --blue-soft:#eff6ff; --blue-line:#bfdbfe;
   --green:#10b981; --green-2:#34d399; --green-soft:#ecfdf5;
+  --red:#ef4444; --red-soft:#fef2f2;
+  --amber:#f59e0b; --amber-soft:#fffbeb;
   --ink:#0f172a; --muted:#64748b; --line:#e6ecf3;
   --bg:#ffffff; --soft:#f7fafc; --radius:16px;
   --shadow-sm:0 1px 2px rgba(15,23,42,.06);
@@ -144,17 +146,18 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 .btn svg{width:17px;height:17px;stroke-width:2.2}
 .btn-primary{background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;box-shadow:0 10px 24px rgba(37,99,235,.26)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(37,99,235,.36)}
-.btn-primary:active{transform:translateY(0)}
 .btn-ghost{background:var(--blue-soft);color:var(--blue)}
 .btn-ghost:hover{background:#dbeafe;transform:translateY(-2px)}
 .btn-green{background:var(--green-soft);color:#047857}
 .btn-green:hover{background:#d1fae5;transform:translateY(-2px)}
-.btn-danger{background:#fef2f2;color:#dc2626}
-.btn-danger:hover{background:#fee2e2}
+.btn-danger{background:var(--red-soft);color:var(--red)}
+.btn-danger:hover{background:#fee2e2;transform:translateY(-2px)}
 .btn-block{width:100%}
 .btn-sm{padding:7px 13px;font-size:12.5px;border-radius:10px}
+.btn-xs{padding:4px 8px;font-size:11px;border-radius:8px}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none}
 
+/* Racks */
 .row-block{margin-bottom:22px}
 .row-head{
   display:flex;align-items:center;gap:12px;margin-bottom:12px;
@@ -164,8 +167,10 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
   width:42px;height:42px;border-radius:13px;display:grid;place-items:center;
   background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;
   font-weight:800;font-size:16px;box-shadow:0 8px 18px rgba(37,99,235,.25);
+  flex:0 0 42px;
 }
 .row-meta{font-size:13px;color:var(--muted);font-weight:600}
+.row-head .row-meta-box{flex:1;min-width:0}
 .rack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
 .rack-card{
   border:1.6px solid var(--line);border-radius:14px;padding:13px 14px;background:#fff;
@@ -190,7 +195,17 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 }
 .side-L{background:var(--blue-soft);color:var(--blue)}
 .side-R{background:var(--green-soft);color:#047857}
+.rack-del{
+  position:absolute;bottom:11px;right:11px;z-index:3;
+  width:22px;height:22px;border-radius:7px;border:0;background:#fff;
+  color:var(--red);cursor:pointer;display:none;place-items:center;
+  box-shadow:0 2px 8px rgba(239,68,68,.25);transition:all .2s;padding:0;
+  font-size:13px;line-height:1;font-weight:900;
+}
+.rack-card:hover .rack-del{display:grid}
+.rack-del:hover{background:var(--red);color:#fff;transform:scale(1.12)}
 
+/* Scan card */
 .scan-card{border:2px solid transparent;background:
   linear-gradient(#fff,#fff) padding-box,
   linear-gradient(135deg,var(--blue),var(--green)) border-box;
@@ -227,8 +242,8 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
 }
 .hint.info{background:var(--blue-soft);color:#1e40af}
 .hint.ok{background:var(--green-soft);color:#047857}
-.hint.warn{background:#fffbeb;color:#b45309}
-.hint.err{background:#fef2f2;color:#b91c1c}
+.hint.warn{background:var(--amber-soft);color:#b45309}
+.hint.err{background:var(--red-soft);color:#b91c1c}
 
 .quick-rack{
   background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1.5px dashed #f59e0b;
@@ -255,6 +270,7 @@ input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,9
   background:var(--green-soft);color:#047857;
 }
 
+/* Table */
 .table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line)}
 table{width:100%;border-collapse:collapse;font-size:13px;min-width:1100px}
 thead th{
@@ -274,9 +290,9 @@ tbody tr:last-child td{border-bottom:0}
 }
 .pill-blue{background:var(--blue-soft);color:var(--blue)}
 .pill-green{background:var(--green-soft);color:#047857}
-.pill-amber{background:#fffbeb;color:#b45309}
+.pill-amber{background:var(--amber-soft);color:#b45309}
 .pill-purple{background:#f5f3ff;color:#7c3aed}
-.pill-red{background:#fef2f2;color:#b91c1c}
+.pill-red{background:var(--red-soft);color:#b91c1c}
 
 #map{height:calc(100vh - 250px);min-height:420px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);z-index:1}
 .leaflet-container{font-family:inherit}
@@ -291,6 +307,7 @@ tbody tr:last-child td{border-bottom:0}
 }
 .map-fallback{padding:40px;text-align:center;color:var(--muted);font-weight:600}
 
+/* Toasts */
 #toasts{position:fixed;top:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:11px;pointer-events:none}
 .toast{
   min-width:280px;max-width:420px;padding:14px 18px;border-radius:14px;background:#fff;
@@ -300,15 +317,15 @@ tbody tr:last-child td{border-bottom:0}
 }
 .toast.err{border-left-color:#ef4444}
 .toast.info{border-left-color:var(--blue)}
-.toast.warn{border-left-color:#f59e0b}
+.toast.warn{border-left-color:var(--amber)}
 .toast.out{animation:slideOut .3s forwards}
 @keyframes slideIn{from{opacity:0;transform:translateX(80px) scale(.95)}to{opacity:1;transform:none}}
 @keyframes slideOut{to{opacity:0;transform:translateX(80px) scale(.95)}}
 .toast-ico{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:0 0 34px;font-size:16px}
 .toast.ok .toast-ico{background:var(--green-soft)}
-.toast.err .toast-ico{background:#fef2f2}
+.toast.err .toast-ico{background:var(--red-soft)}
 .toast.info .toast-ico{background:var(--blue-soft)}
-.toast.warn .toast-ico{background:#fffbeb}
+.toast.warn .toast-ico{background:var(--amber-soft)}
 
 #flash{
   position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0;
@@ -326,6 +343,88 @@ tbody tr:last-child td{border-bottom:0}
 .toolbar input,.toolbar select{width:auto;min-width:170px;padding:10px 13px;font-size:13.5px}
 .spacer{flex:1}
 
+/* ---------- DIAGRAM MODAL ---------- */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9997;
+  display:none;align-items:flex-start;justify-content:center;padding:28px;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  overflow-y:auto;
+}
+.modal-bg.open{display:flex;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{
+  background:#fff;border-radius:20px;width:100%;max-width:1400px;
+  box-shadow:0 30px 80px rgba(15,23,42,.35);overflow:hidden;
+  animation:popIn .32s cubic-bezier(.34,1.56,.64,1);margin:auto;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(20px)}to{opacity:1;transform:none}}
+.modal-head{
+  padding:20px 24px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;justify-content:space-between;
+  background:linear-gradient(135deg,#f8fbff,#f2fdf9);
+}
+.modal-head h2{font-size:19px;font-weight:800;letter-spacing:-.3px}
+.modal-head p{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px}
+.modal-body{padding:24px;background:#fbfdff}
+
+/* Warehouse diagram */
+.wh{
+  background:#fff;border:2px solid var(--line);border-radius:16px;padding:20px;
+  box-shadow:inset 0 2px 12px rgba(37,99,235,.04);
+}
+.wh-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:14px;margin-bottom:18px;border-bottom:2px dashed var(--line);
+}
+.wh-title{font-size:13px;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase}
+.wh-legend{display:flex;gap:18px;font-size:11.5px;font-weight:700;color:var(--muted);flex-wrap:wrap}
+.wh-legend span{display:flex;align-items:center;gap:6px}
+.wh-key{width:14px;height:14px;border-radius:5px;border:1.5px solid}
+.wh-key.L{background:var(--blue-soft);border-color:var(--blue)}
+.wh-key.R{background:var(--green-soft);border-color:var(--green)}
+
+.wh-row{
+  display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:stretch;
+  margin-bottom:14px;
+}
+.wh-row-label{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;
+  border-radius:12px;font-weight:900;font-size:20px;letter-spacing:1px;
+  padding:10px 0;box-shadow:0 6px 16px rgba(37,99,235,.22);
+}
+.wh-row-label small{font-size:9px;font-weight:700;opacity:.85;letter-spacing:1px;margin-top:2px}
+.wh-racks{
+  display:grid;gap:8px;padding:10px;border-radius:12px;
+  background:repeating-linear-gradient(90deg,#f8fbff 0,#f8fbff 40px,#f2f8ff 40px,#f2f8ff 80px);
+  border:1.5px dashed var(--line);min-height:64px;
+}
+.wh-racks.cols-1{grid-template-columns:1fr}
+.wh-pos{display:grid;gap:6px}
+.wh-pos.dual{grid-template-columns:1fr 1fr}
+.wh-box{
+  border-radius:10px;padding:8px 10px;font-weight:800;
+  display:flex;flex-direction:column;gap:2px;min-width:0;
+  transition:all .22s;cursor:pointer;position:relative;
+  border:1.6px solid transparent;
+}
+.wh-box:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 8px 18px rgba(37,99,235,.18)}
+.wh-box.L{background:var(--blue-soft);color:#1e40af;border-color:var(--blue-line)}
+.wh-box.R{background:var(--green-soft);color:#047857;border-color:#a7f3d0}
+.wh-box .id{font-size:11.5px;letter-spacing:.4px;font-family:'SF Mono',Menlo,monospace}
+.wh-box .cnt{
+  font-size:16px;font-weight:900;letter-spacing:-.5px;
+  display:flex;align-items:baseline;gap:3px;
+}
+.wh-box .cnt small{font-size:9px;font-weight:700;opacity:.7;letter-spacing:.6px;text-transform:uppercase}
+.wh-box.empty{opacity:.5;border-style:dashed;background:#fff;color:var(--muted)}
+
+.wh-summary{
+  margin-top:20px;padding-top:16px;border-top:2px dashed var(--line);
+  display:flex;gap:22px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--muted);
+}
+.wh-summary b{color:var(--ink);font-size:14px}
+
 @media(max-width:900px){
   .app{grid-template-columns:1fr}
   .sidebar{position:static;height:auto;flex-direction:row;overflow-x:auto;gap:12px;padding:14px;align-items:center}
@@ -337,6 +436,9 @@ tbody tr:last-child td{border-bottom:0}
   .nav-item.active span,.nav-item:hover span{display:inline}
   .conn{display:none}
   .main{padding:18px}
+  .modal-bg{padding:10px}
+  .modal-body{padding:14px}
+  .wh-row{grid-template-columns:44px 1fr}
 }
 </style>
 </head>
@@ -372,6 +474,10 @@ tbody tr:last-child td{border-bottom:0}
       <button type="button" class="nav-item" data-view="inventory">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v3"/><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M10 12h4"/></svg>
         <span>Inventory</span>
+      </button>
+      <button type="button" class="nav-item" data-view="diagram">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="11" width="18" height="4" rx="1"/><rect x="3" y="18" width="18" height="3" rx="1"/></svg>
+        <span>Diagram</span>
       </button>
     </nav>
 
@@ -456,13 +562,19 @@ tbody tr:last-child td{border-bottom:0}
                 </select>
               </div>
             </div>
-            <button type="button" class="btn btn-primary" id="addRacksBtn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-              Add Racks
-            </button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button type="button" class="btn btn-primary" id="addRacksBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                Add Racks
+              </button>
+              <button type="button" class="btn btn-ghost" id="viewDiagramBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="11" width="18" height="4" rx="1"/><rect x="3" y="18" width="18" height="3" rx="1"/></svg>
+                View Diagram
+              </button>
+            </div>
             <div class="hint info" style="margin-top:14px">
               <span>ℹ️</span>
-              <span>Rack ID format: <b>A-L-1</b> (right) / <b>A-R-1</b> (left). New rows are auto-assigned A, B, C, D, E&hellip;</span>
+              <span>Rack ID format: <b>A-L-1</b> (right) / <b>A-R-1</b> (left). Hover any rack to delete it, or use the trash icon next to a row header to remove the whole row.</span>
             </div>
           </div>
 
@@ -483,7 +595,6 @@ tbody tr:last-child td{border-bottom:0}
     <section class="view" id="view-scan">
       <div class="row-split">
         <div class="card scan-card">
-
           <div class="quick-rack" id="quickRackBox" style="display:none">
             <h4>⚠️ No racks exist yet — create one to enable saving</h4>
             <div class="qr-row">
@@ -547,22 +658,10 @@ tbody tr:last-child td{border-bottom:0}
               <label>BOP Category <span class="req">*</span></label>
               <select id="bopInput">
                 <option value="">Select grade…</option>
-                <option>BOP</option>
-                <option>BOPF</option>
-                <option>BOP1</option>
-                <option>BP1</option>
-                <option>PF</option>
-                <option>PF1</option>
-                <option>PD</option>
-                <option>PD1</option>
-                <option>Dust</option>
-                <option>Dust1</option>
-                <option>FBOP</option>
-                <option>FBOPF</option>
-                <option>OP</option>
-                <option>OPA</option>
-                <option>Fannings</option>
-                <option>Other</option>
+                <option>BOP</option><option>BOPF</option><option>BOP1</option><option>BP1</option>
+                <option>PF</option><option>PF1</option><option>PD</option><option>PD1</option>
+                <option>Dust</option><option>Dust1</option><option>FBOP</option><option>FBOPF</option>
+                <option>OP</option><option>OPA</option><option>Fannings</option><option>Other</option>
               </select>
             </div>
           </div>
@@ -611,6 +710,19 @@ tbody tr:last-child td{border-bottom:0}
       <div id="map"></div>
     </section>
 
+    <!-- DIAGRAM -->
+    <section class="view" id="view-diagram">
+      <div class="card">
+        <div class="toolbar">
+          <div class="card-title" style="margin:0"><span class="bar"></span>Warehouse Layout Diagram</div>
+          <div class="spacer"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="diagramRefreshBtn">↻ Refresh</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="diagramPrintBtn">🖨 Print</button>
+        </div>
+        <div id="diagramInline"></div>
+      </div>
+    </section>
+
     <!-- INVENTORY -->
     <section class="view" id="view-inventory">
       <div class="card">
@@ -631,16 +743,9 @@ tbody tr:last-child td{border-bottom:0}
           <table>
             <thead>
               <tr>
-                <th>UFID</th>
-                <th>Rack</th>
-                <th>Supply / Invoice</th>
-                <th>Box No</th>
-                <th>Company</th>
-                <th>KG</th>
-                <th>BOP Category</th>
-                <th>Signal</th>
-                <th>Scanned At</th>
-                <th></th>
+                <th>UFID</th><th>Rack</th><th>Supply / Invoice</th><th>Box No</th>
+                <th>Company</th><th>KG</th><th>BOP Category</th><th>Signal</th>
+                <th>Scanned At</th><th></th>
               </tr>
             </thead>
             <tbody id="invBody"></tbody>
@@ -651,16 +756,31 @@ tbody tr:last-child td{border-bottom:0}
   </main>
 </div>
 
+<!-- ================= FULLSCREEN DIAGRAM MODAL ================= -->
+<div class="modal-bg" id="diagramModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2>📊 Warehouse Layout Diagram</h2>
+        <p>Visual overview of all rows, racks and bag counts — L = right side, R = left side</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="closeDiagramBtn">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div id="diagramFullscreen"></div>
+    </div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 <div id="flash"></div>
 
-<!-- Firebase Realtime Database SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 /* =====================================================================
-   FIREBASE CONFIGURATION — Realtime Database
+   FIREBASE CONFIG — Realtime Database
    ===================================================================== */
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyABuZWbNXGJ359mbctDsX-SSxwkUd3v1KY",
@@ -672,10 +792,7 @@ const FIREBASE_CONFIG = {
   appId:             "1:36925529487:web:385e1af7ba174f8440fffa"
 };
 
-/* Data is stored under this namespace so it doesn't clash with anything
-   else that might already live in your Realtime Database. */
 const DB_ROOT = 'teastore';
-
 const MIN_SIGNAL   = 98;
 const UFID_PREFIX  = "6M";
 const UFID_MIN_LEN = 6;
@@ -728,24 +845,17 @@ function flash(){
 }
 
 /* =====================================================================
-   LOCAL BACKUP STORAGE (used as offline cache)
+   LOCAL BACKUP STORAGE
    ===================================================================== */
 const Storage = {
   available: false,
   memory: { racks: [], bags: [] },
-
   test(){
     try {
       const k = '__tsp_test__';
-      localStorage.setItem(k, '1');
-      localStorage.removeItem(k);
-      this.available = true;
-      return true;
-    } catch (e){
-      console.warn('[Storage] localStorage not available:', e.message);
-      this.available = false;
-      return false;
-    }
+      localStorage.setItem(k, '1'); localStorage.removeItem(k);
+      this.available = true; return true;
+    } catch (e){ this.available = false; return false; }
   },
   read(key){
     if (this.available){
@@ -754,10 +864,7 @@ const Storage = {
         if (!raw) return null;
         const p = JSON.parse(raw);
         return Array.isArray(p) ? p : null;
-      } catch (e){
-        console.warn('[Storage] read error', key, e.message);
-        return null;
-      }
+      } catch (e){ return null; }
     }
     if (key === 'teastore_racks_v2') return this.memory.racks;
     if (key === 'teastore_bags_v2')  return this.memory.bags;
@@ -765,13 +872,8 @@ const Storage = {
   },
   write(key, val){
     if (this.available){
-      try {
-        localStorage.setItem(key, JSON.stringify(val));
-        return true;
-      } catch (e){
-        console.warn('[Storage] write error', key, e.message);
-        return false;
-      }
+      try { localStorage.setItem(key, JSON.stringify(val)); return true; }
+      catch (e){ return false; }
     }
     if (key === 'teastore_racks_v2') this.memory.racks = val;
     if (key === 'teastore_bags_v2')  this.memory.bags  = val;
@@ -780,10 +882,10 @@ const Storage = {
 };
 
 /* =====================================================================
-   DATA LAYER — Firebase Realtime Database with LocalStorage backup
+   DATA LAYER — Firebase RTDB + LocalStorage backup
    ===================================================================== */
 const Data = {
-  mode: 'local',        // 'firebase' | 'local' | 'memory'
+  mode: 'local',
   db: null,
   racks: [],
   bags: [],
@@ -791,21 +893,17 @@ const Data = {
   async init(){
     const localOk = Storage.test();
 
-    // Try Firebase Realtime Database
     if (typeof firebase !== 'undefined' && FIREBASE_CONFIG.databaseURL){
       try{
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         this.db = firebase.database();
-
-        // Connection test with timeout so we don't hang forever
         await Promise.race([
           this.db.ref(DB_ROOT).once('value'),
           new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 8000))
         ]);
-
         this.mode = 'firebase';
       }catch(e){
-        console.warn('[Firebase RTDB] init failed — using LocalStorage:', e.message);
+        console.warn('[Firebase RTDB] init failed:', e.message);
         this.mode = localOk ? 'local' : 'memory';
       }
     } else {
@@ -815,20 +913,17 @@ const Data = {
     await this.loadAll();
     UI.updateConn();
 
-    // Attach live listener so any change from another tab/device syncs in
     if (this.mode === 'firebase' && this.db){
       try{
         this.db.ref(DB_ROOT).on('value', (snap) => {
           const v = snap.val() || {};
-          const racksObj = v.racks || {};
-          const bagsObj  = v.bags  || {};
-          this.racks = Object.values(racksObj).filter(Boolean);
-          this.bags  = Object.values(bagsObj).filter(Boolean);
+          this.racks = Object.values(v.racks || {}).filter(Boolean);
+          this.bags  = Object.values(v.bags  || {}).filter(Boolean);
           this._sort();
-          this._persist();       // refresh local backup
+          this._persist();
           try { UI.refreshAll(); } catch(_){}
         });
-      }catch(e){ console.warn('[Firebase RTDB] listener failed:', e.message); }
+      }catch(e){ console.warn('[RTDB] listener failed:', e.message); }
     }
   },
 
@@ -844,11 +939,9 @@ const Data = {
         this.bags  = Storage.read('teastore_bags_v2')  || [];
       }
     } catch (err){
-      console.error('[Data.loadAll] error:', err);
       this.racks = Storage.read('teastore_racks_v2') || [];
       this.bags  = Storage.read('teastore_bags_v2')  || [];
     }
-
     if (!Array.isArray(this.racks)) this.racks = [];
     if (!Array.isArray(this.bags))  this.bags  = [];
     this._sort();
@@ -875,22 +968,15 @@ const Data = {
     if (!rack || !rack.id) return false;
     if (this.racks.some(r => r.id === rack.id)) return false;
 
-    // Write to Firebase (best-effort)
     if (this.mode === 'firebase' && this.db){
-      try {
-        await this.db.ref(`${DB_ROOT}/racks/${rack.id}`).set(rack);
-      } catch (e){
-        console.warn('[RTDB] rack write failed — falling back to local:', e.message);
+      try { await this.db.ref(`${DB_ROOT}/racks/${rack.id}`).set(rack); }
+      catch (e){
         this.mode = Storage.available ? 'local' : 'memory';
         UI.updateConn();
         toast('Cloud write failed — saved locally instead.', 'warn', 4200);
       }
     }
-
-    // Always keep a local copy so nothing is lost
-    if (!this.racks.some(r => r.id === rack.id)){
-      this.racks.push(rack);
-    }
+    if (!this.racks.some(r => r.id === rack.id)) this.racks.push(rack);
     this._sort();
     this._persist();
     return true;
@@ -900,7 +986,6 @@ const Data = {
     const r = this.racks.find(x => x.id === id);
     if (!r) return;
     Object.assign(r, patch);
-
     if (this.mode === 'firebase' && this.db){
       try { await this.db.ref(`${DB_ROOT}/racks/${id}`).update(patch); }
       catch (e){ console.warn('[RTDB] update failed:', e.message); }
@@ -908,12 +993,67 @@ const Data = {
     this._persist();
   },
 
+  /* ---------- NEW: delete a single rack + its bags ---------- */
+  async deleteRack(id){
+    if (!id) return 0;
+    const bagCount = this.bags.filter(b => b.rackId === id).length;
+
+    // Remove rack + all its bags from Firebase
+    if (this.mode === 'firebase' && this.db){
+      try {
+        await this.db.ref(`${DB_ROOT}/racks/${id}`).remove();
+        // Remove bag entries referencing this rack
+        const updates = {};
+        this.bags.filter(b => b.rackId === id).forEach(b => {
+          updates[`${DB_ROOT}/bags/${b.ufid}`] = null;
+        });
+        if (Object.keys(updates).length) await this.db.ref().update(updates);
+      } catch (e){
+        console.warn('[RTDB] deleteRack failed:', e.message);
+      }
+    }
+
+    // Local
+    this.racks = this.racks.filter(r => r.id !== id);
+    this.bags  = this.bags.filter(b => b.rackId !== id);
+    this._persist();
+    return bagCount;
+  },
+
+  /* ---------- NEW: delete an entire row ---------- */
+  async deleteRow(rowLetter){
+    if (!rowLetter) return { racks: 0, bags: 0 };
+    const letter = String(rowLetter).toUpperCase();
+
+    const racksInRow = this.racks.filter(r => r.row === letter);
+    const bagCount   = this.bags.filter(b => b.row === letter || (b.rackId||'').startsWith(letter + '-')).length;
+
+    if (this.mode === 'firebase' && this.db){
+      try {
+        const updates = {};
+        racksInRow.forEach(r => { updates[`${DB_ROOT}/racks/${r.id}`] = null; });
+        this.bags.forEach(b => {
+          if (b.row === letter || (b.rackId||'').startsWith(letter + '-')) {
+            updates[`${DB_ROOT}/bags/${b.ufid}`] = null;
+          }
+        });
+        if (Object.keys(updates).length) await this.db.ref().update(updates);
+      } catch (e){
+        console.warn('[RTDB] deleteRow failed:', e.message);
+      }
+    }
+
+    this.racks = this.racks.filter(r => r.row !== letter);
+    this.bags  = this.bags.filter(b => b.row !== letter && !(b.rackId||'').startsWith(letter + '-'));
+    this._persist();
+
+    return { racks: racksInRow.length, bags: bagCount };
+  },
+
   /* ---- Bags ---- */
   async addBag(bag){
-    // local duplicate check
     if (this.bags.some(b => b.ufid === bag.ufid)) throw new Error('DUPLICATE');
 
-    // Firestore/RTDB attempt
     if (this.mode === 'firebase' && this.db){
       try {
         const ref  = this.db.ref(`${DB_ROOT}/bags/${bag.ufid}`);
@@ -922,17 +1062,13 @@ const Data = {
         await ref.set(bag);
       } catch (e){
         if (e.message === 'DUPLICATE') throw e;
-        console.warn('[RTDB] bag write failed — falling back to local:', e.message);
         this.mode = Storage.available ? 'local' : 'memory';
         UI.updateConn();
         toast('Cloud sync unavailable — saved locally instead.', 'warn', 4200);
       }
     }
 
-    // Always keep local copy
-    if (!this.bags.some(b => b.ufid === bag.ufid)){
-      this.bags.unshift(bag);
-    }
+    if (!this.bags.some(b => b.ufid === bag.ufid)) this.bags.unshift(bag);
     this._sort();
     this._persist();
   },
@@ -983,6 +1119,7 @@ const UI = {
       racks:     ['Rack Management',        'Configure rows, sides and rack numbering'],
       scan:      ['UFID Scanner',           'Register tea bags into racks'],
       map:       ['Live Location Map',      'GPS positions of racks and current device location'],
+      diagram:   ['Warehouse Diagram',      'Visual layout of all rows and racks'],
       inventory: ['Inventory Register',     'Complete record of all scanned tea bags']
     };
     $('#pageTitle').textContent = titles[view][0];
@@ -991,18 +1128,15 @@ const UI = {
     if (view === 'map'){ MapView.ensure(); setTimeout(() => MapView.map && MapView.map.invalidateSize(), 120); }
     if (view === 'scan') setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 200);
     if (view === 'dashboard') this.renderDashboard();
+    if (view === 'diagram')   this.renderDiagram('#diagramInline');
   },
 
   updateConn(){
     const dot = $('#connDot'), txt = $('#connTxt');
     if (!dot || !txt) return;
-    if (Data.mode === 'firebase'){
-      dot.className = 'dot live'; txt.textContent = 'Firebase RTDB Connected';
-    } else if (Data.mode === 'local'){
-      dot.className = 'dot off';  txt.textContent = 'Local Storage';
-    } else {
-      dot.className = 'dot err';  txt.textContent = 'Memory only';
-    }
+    if (Data.mode === 'firebase'){ dot.className = 'dot live'; txt.textContent = 'Firebase RTDB Connected'; }
+    else if (Data.mode === 'local'){ dot.className = 'dot off'; txt.textContent = 'Local Storage'; }
+    else { dot.className = 'dot err'; txt.textContent = 'Memory only'; }
   },
 
   renderDashboard(){
@@ -1094,10 +1228,13 @@ const UI = {
           <div class="row-block">
             <div class="row-head">
               <div class="row-chip">${escapeHtml(k)}</div>
-              <div>
+              <div class="row-meta-box">
                 <div style="font-size:14px;font-weight:800">Row ${escapeHtml(k)}</div>
                 <div class="row-meta">${list.length} racks • ${total} bags</div>
               </div>
+              <button type="button" class="btn btn-danger btn-xs" data-del-row="${escapeHtml(k)}" title="Delete entire row ${escapeHtml(k)} and all its bags">
+                🗑 Delete Row
+              </button>
             </div>
             <div class="rack-grid">
               ${list.map(r => `
@@ -1106,16 +1243,50 @@ const UI = {
                   <div class="rack-id">${escapeHtml(r.id)}</div>
                   <div class="rack-cnt">${Data.countIn(r.id)}</div>
                   <div class="rack-sub">Tea Bags</div>
+                  <button type="button" class="rack-del" data-del-rack="${escapeHtml(r.id)}" title="Delete this rack">✕</button>
                 </div>`).join('')}
             </div>
           </div>`;
       }).join('');
 
+      // Click on rack → jump to scan
       $$('.rack-card', tree).forEach(c => {
-        c.addEventListener('click', () => {
+        c.addEventListener('click', (e) => {
+          if (e.target.closest('.rack-del')) return; // ignore delete clicks
           $('#rackInput').value = c.dataset.rack;
           UI.go('scan');
           setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 250);
+        });
+      });
+
+      // Delete rack
+      $$('[data-del-rack]', tree).forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const rackId = btn.dataset.delRack;
+          const bagCount = Data.countIn(rackId);
+          const msg = bagCount > 0
+            ? `Delete rack "${rackId}" and its ${bagCount} bag(s)? This cannot be undone.`
+            : `Delete rack "${rackId}"?`;
+          if (!confirm(msg)) return;
+          const removed = await Data.deleteRack(rackId);
+          toast(`Rack ${rackId} deleted${removed ? ` (${removed} bags removed)` : ''}`, 'info');
+          this.refreshAll();
+          this.renderDiagram('#diagramInline');
+        });
+      });
+
+      // Delete row
+      $$('[data-del-row]', tree).forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const rowLetter = btn.dataset.delRow;
+          const racksIn = Data.racks.filter(r => r.row === rowLetter).length;
+          const bagsIn  = Data.bags.filter(b => b.row === rowLetter || (b.rackId||'').startsWith(rowLetter + '-')).length;
+          if (!confirm(`Delete the whole Row ${rowLetter}?\n\nThis will remove ${racksIn} rack(s) and ${bagsIn} bag(s).\n\nThis cannot be undone.`)) return;
+          const res = await Data.deleteRow(rowLetter);
+          toast(`Row ${rowLetter} deleted — ${res.racks} rack(s), ${res.bags} bag(s) removed`, 'info');
+          this.refreshAll();
+          this.renderDiagram('#diagramInline');
         });
       });
     }
@@ -1135,16 +1306,125 @@ const UI = {
       : `<div class="empty" style="padding:26px"><p>No data</p></div>`;
   },
 
+  /* ============ DIAGRAM RENDER ============ */
+  renderDiagram(targetSel){
+    const target = typeof targetSel === 'string' ? $(targetSel) : targetSel;
+    if (!target) return;
+
+    if (!Data.racks.length){
+      target.innerHTML = `<div class="empty"><div class="empty-ico">🗺️</div><h3>No racks to display</h3><p>Add racks first, then come back to see the diagram</p></div>`;
+      return;
+    }
+
+    // Group racks by row
+    const grouped = {};
+    Data.racks.forEach(r => { (grouped[r.row] = grouped[r.row] || []).push(r); });
+    const keys = Object.keys(grouped).sort((a,b) => rowIndex(a) - rowIndex(b));
+
+    const totalBags = Data.bags.length;
+    const totalRacks = Data.racks.length;
+    const totalRows = keys.length;
+    const totalKG = Data.totalKG().toFixed(1);
+
+    target.innerHTML = `
+      <div class="wh">
+        <div class="wh-header">
+          <div class="wh-title">🏭 Warehouse Floor Plan</div>
+          <div class="wh-legend">
+            <span><span class="wh-key L"></span> L = Right side</span>
+            <span><span class="wh-key R"></span> R = Left side</span>
+            <span>${totalRows} row(s) • ${totalRacks} rack(s)</span>
+          </div>
+        </div>
+
+        ${keys.map(rowKey => {
+          const list = grouped[rowKey].sort((a,b) => (a.pos||0) - (b.pos||0));
+
+          // Group by position, so we can pair L and R
+          const positions = {};
+          list.forEach(r => {
+            const p = r.pos || 0;
+            if (!positions[p]) positions[p] = { L: null, R: null };
+            positions[p][r.side] = r;
+          });
+          const sortedPos = Object.keys(positions).map(Number).sort((a,b) => a - b);
+          const rowTotal = list.reduce((s, r) => s + Data.countIn(r.id), 0);
+          const rowKG = Data.bags
+            .filter(b => b.row === rowKey || (b.rackId||'').startsWith(rowKey + '-'))
+            .reduce((s, b) => s + (parseFloat(b.kg) || 0), 0);
+
+          return `
+            <div class="wh-row">
+              <div class="wh-row-label">
+                ${escapeHtml(rowKey)}
+                <small>${list.length} RCK</small>
+              </div>
+              <div class="wh-racks" style="grid-template-columns:repeat(auto-fit, minmax(80px, 1fr))">
+                ${sortedPos.map(p => {
+                  const pair = positions[p];
+                  const dual = pair.L && pair.R;
+                  return `
+                    <div class="wh-pos ${dual ? 'dual' : ''}">
+                      ${pair.L ? `
+                        <div class="wh-box L ${Data.countIn(pair.L.id) === 0 ? 'empty' : ''}"
+                             data-diag-rack="${escapeHtml(pair.L.id)}" title="${escapeHtml(pair.L.id)}">
+                          <span class="id">${escapeHtml(pair.L.id)}</span>
+                          <span class="cnt">${Data.countIn(pair.L.id)}<small>bags</small></span>
+                        </div>` : ''}
+                      ${pair.R ? `
+                        <div class="wh-box R ${Data.countIn(pair.R.id) === 0 ? 'empty' : ''}"
+                             data-diag-rack="${escapeHtml(pair.R.id)}" title="${escapeHtml(pair.R.id)}">
+                          <span class="id">${escapeHtml(pair.R.id)}</span>
+                          <span class="cnt">${Data.countIn(pair.R.id)}<small>bags</small></span>
+                        </div>` : ''}
+                    </div>`;
+                }).join('')}
+              </div>
+            </div>
+            <div style="text-align:right;font-size:11.5px;font-weight:700;color:var(--muted);margin:-8px 0 14px 70px">
+              Row ${escapeHtml(rowKey)} total: <b style="color:var(--ink)">${rowTotal} bags</b> • <b style="color:var(--green)">${rowKG.toFixed(1)} KG</b>
+            </div>`;
+        }).join('')}
+
+        <div class="wh-summary">
+          <div>Total Rows: <b>${totalRows}</b></div>
+          <div>Total Racks: <b>${totalRacks}</b></div>
+          <div>Total Bags: <b>${totalBags}</b></div>
+          <div>Total Weight: <b>${totalKG} KG</b></div>
+        </div>
+      </div>
+    `;
+
+    // Click any box → jump to scan with that rack preselected
+    $$('[data-diag-rack]', target).forEach(box => {
+      box.addEventListener('click', () => {
+        const rackId = box.dataset.diagRack;
+        $('#rackInput').value = rackId;
+        // Close modal if open
+        const modal = $('#diagramModal');
+        if (modal && modal.classList.contains('open')) modal.classList.remove('open');
+        UI.go('scan');
+        setTimeout(() => { const el = $('#ufidInput'); if (el) el.focus(); }, 250);
+      });
+    });
+  },
+
+  openDiagramModal(){
+    const modal = $('#diagramModal');
+    this.renderDiagram('#diagramFullscreen');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  },
+  closeDiagramModal(){
+    $('#diagramModal').classList.remove('open');
+    document.body.style.overflow = '';
+  },
+
   async addRacks(){
     try {
       const rowSel   = $('#rowSelect');
       const countInp = $('#rackCount');
       const sideSel  = $('#sideSelect');
-
-      if (!rowSel || !countInp || !sideSel){
-        toast('Form elements missing.', 'err');
-        return;
-      }
 
       const selVal   = rowSel.value;
       const rawCount = parseInt(countInp.value, 10);
@@ -1168,15 +1448,14 @@ const UI = {
         for (const s of sideList){
           const id = `${row}-${s}-${p}`;
           const ok = await Data.addRack({
-            id, row, side: s, pos: p,
-            lat: null, lng: null,
-            createdAt: Date.now()
+            id, row, side: s, pos: p, lat: null, lng: null, createdAt: Date.now()
           });
           if (ok) added++;
         }
       }
 
       this.refreshAll();
+      this.renderDiagram('#diagramInline');
 
       if (added > 0){
         toast(`${added} rack${added > 1 ? 's' : ''} created in Row ${row}`, 'ok');
@@ -1189,9 +1468,7 @@ const UI = {
     }
   },
 
-  /* ======================= SAVE BAG ======================= */
   async saveBag(){
-    console.group('🔎 Save Bag attempt');
     try {
       const parsed = this.parseScan($('#ufidInput').value);
       const ufid   = parsed.ufid;
@@ -1204,13 +1481,8 @@ const UI = {
       const invoice = String($('#invoiceInput').value || '').trim();
       const boxNo   = String($('#boxInput').value || '').trim();
       const company = String($('#companyInput').value || '').trim();
-      const kgRaw   = $('#kgInput').value;
-      const kg      = parseFloat(kgRaw);
+      const kg      = parseFloat($('#kgInput').value);
       const bop     = String($('#bopInput').value || '').trim();
-
-      console.log({ ufid, signal, rackId, invoice, boxNo, company, kgRaw, kg, bop });
-      console.log('Racks:', Data.racks.map(r => r.id));
-      console.log('Mode:', Data.mode, '| localStorage:', Storage.available);
 
       const ufidEl = $('#ufidInput');
       const hint   = $('#scanHint');
@@ -1234,10 +1506,8 @@ const UI = {
         }
         this.setScanStatus('Validation failed', 'err');
         toast(msg, 'err', 4800);
-        console.warn('❌ Save blocked:', msg);
       };
 
-      /* Field-by-field validation */
       if (!ufid)                          return fail('UFID tag is required.', '#ufidInput');
       if (!ufid.startsWith(UFID_PREFIX))  return fail(`UFID must start with "${UFID_PREFIX}" (got "${escapeHtml(ufid)}").`, '#ufidInput');
       if (ufid.length < UFID_MIN_LEN)     return fail(`UFID must be at least ${UFID_MIN_LEN} characters (got ${ufid.length}).`, '#ufidInput');
@@ -1270,7 +1540,6 @@ const UI = {
 
       await Data.addBag(bag);
 
-      /* Success feedback */
       flash();
       if (ufidEl){
         ufidEl.classList.remove('err'); ufidEl.classList.add('ok');
@@ -1283,7 +1552,6 @@ const UI = {
       this.setScanStatus('Saved successfully', 'ok');
       toast(`✔ ${escapeHtml(ufid)} → ${escapeHtml(rackId)}`, 'ok');
 
-      /* Reset scanner */
       if (ufidEl) ufidEl.value = '';
       $('#boxInput').value = '';
       $('#kgInput').value  = '';
@@ -1294,13 +1562,12 @@ const UI = {
 
       this.refreshAll();
       this.renderScan();
+      this.renderDiagram('#diagramInline');
 
     } catch (err){
       console.error('[saveBag] fatal:', err);
       toast('Save failed: ' + (err && err.message ? err.message : 'Unknown error'), 'err', 5500);
       this.setScanStatus('Save failed', 'err');
-    } finally {
-      console.groupEnd();
     }
   },
 
@@ -1410,6 +1677,7 @@ const UI = {
         await Data.deleteBag(ufid);
         toast(`${ufid} deleted`, 'info');
         this.refreshAll();
+        this.renderDiagram('#diagramInline');
       });
     });
   },
@@ -1442,6 +1710,7 @@ const UI = {
     try { this.renderScan();      } catch(e){ console.error('renderScan', e); }
     try { this.renderInventory(); } catch(e){ console.error('renderInventory', e); }
     try { MapView.renderMarkers(); } catch(e){ console.error('renderMarkers', e); }
+    try { this.renderDiagram('#diagramInline'); } catch(e){ console.error('renderDiagram', e); }
   }
 };
 
@@ -1568,6 +1837,19 @@ async function boot(){
   bind('#ufidInput',   'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
   bind('#signalInput', 'input', () => UI.updateSigBar());
   bind('#kgInput',     'keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); UI.saveBag(); } });
+
+  /* Diagram buttons */
+  bind('#viewDiagramBtn',    'click', () => UI.openDiagramModal());
+  bind('#closeDiagramBtn',   'click', () => UI.closeDiagramModal());
+  bind('#diagramRefreshBtn', 'click', () => UI.renderDiagram('#diagramInline'));
+  bind('#diagramPrintBtn',   'click', () => window.print());
+
+  // Close modal on background click or ESC
+  const modalBg = $('#diagramModal');
+  if (modalBg){
+    modalBg.addEventListener('click', (e) => { if (e.target === modalBg) UI.closeDiagramModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') UI.closeDiagramModal(); });
+  }
 
   bind('#qrAddBtn', 'click', async () => {
     const raw = String($('#qrRackId').value || '').trim().toUpperCase();
